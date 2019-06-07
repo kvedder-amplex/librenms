@@ -534,11 +534,6 @@ class Device extends BaseModel
         return $this->hasMany('App\Models\Port', 'device_id', 'device_id');
     }
 
-    public function portsFdb()
-    {
-        return $this->hasMany('App\Models\PortsFdb', 'device_id', 'device_id');
-    }
-
     public function portsNac()
     {
         return $this->hasMany('App\Models\PortsNac', 'device_id', 'device_id');
@@ -572,16 +567,6 @@ class Device extends BaseModel
     public function mempools()
     {
         return $this->hasMany('App\Models\Mempool', 'device_id');
-    }
-
-    public function mplsLsps()
-    {
-        return $this->hasMany('App\Models\MplsLsp', 'device_id');
-    }
-
-    public function mplsLspPaths()
-    {
-        return $this->hasMany('App\Models\MplsLspPath', 'device_id');
     }
 
     public function syslogs()

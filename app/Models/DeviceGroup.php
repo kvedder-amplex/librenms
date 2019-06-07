@@ -25,7 +25,6 @@
 
 namespace App\Models;
 
-use Permissions;
 use DB;
 
 class DeviceGroup extends BaseModel
@@ -292,7 +291,11 @@ class DeviceGroup extends BaseModel
             return $query;
         }
 
-        return $query->whereIn('id', Permissions::deviceGroupsForUser($user));
+        if (!$this->isJoined($query, 'device_group_device')) {
+            $query->join('device_group_device', 'device_group_device.device_group_id', 'device_groups.id');
+        }
+
+        return $this->hasDeviceAccess($query, $user, 'device_group_device');
     }
 
     // ---- Define Relationships ----

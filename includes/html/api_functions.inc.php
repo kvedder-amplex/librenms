@@ -311,7 +311,7 @@ function list_devices()
         $order = 'd.`'.$order.'` ASC';
     }
 
-    $select = " d.*, GROUP_CONCAT(dd.device_id) AS dependency_parent_id, GROUP_CONCAT(dd.hostname) AS dependency_parent_hostname, `location`, `lat`, `lng` ";
+    $select = " d.*, GROUP_CONCAT(dd.device_id) AS dependency_parent_id, GROUP_CONCAT(dd.hostname) AS dependency_parent_hostname, `lat`, `lng` ";
     $join = " LEFT JOIN `device_relationships` AS dr ON dr.`child_device_id` = d.`device_id` LEFT JOIN `devices` AS dd ON dr.`parent_device_id` = dd.`device_id` LEFT JOIN `locations` ON `locations`.`id` = `d`.`location_id`";
 
     if ($type == 'all' || empty($type)) {
@@ -397,7 +397,6 @@ function add_device()
     $snmp_disable = ($data['snmp_disable']);
     if ($snmp_disable) {
         $additional = array(
-            'sysName'      => $data['sysName'] ? mres($data['sysName']) : '',
             'os'           => $data['os'] ? mres($data['os']) : 'ping',
             'hardware'     => $data['hardware'] ? mres($data['hardware']) : '',
             'snmp_disable' => 1,
@@ -803,7 +802,7 @@ function list_available_health_graphs()
     $device_id = ctype_digit($hostname) ? $hostname : getidbyname($hostname);
     check_device_permission($device_id);
     if (isset($router['type'])) {
-        list($dump, $type) = explode('device_', $router['type']);
+        list($dump, $type) = explode('_', $router['type']);
     }
     $sensor_id = $router['sensor_id'] ?: null;
     $graphs    = array();
@@ -2050,13 +2049,8 @@ function get_fdb()
     }
     check_device_permission($device_id);
 
-    $device = \App\Models\Device::find($device_id);
-    if ($device) {
-        $fdb = $device->portsFdb;
-        api_success($fdb, 'ports_fdb');
-    }
-
-    api_error(404, 'Device does not exist');
+    $fdb = \App\Models\PortsFdb::find($device_id);
+    api_success($fdb, 'ports_fdb');
 }
 
 
@@ -2068,13 +2062,13 @@ function list_fdb()
     $router     = $app->router()->getCurrentRoute()->getParams();
     $mac        = $router['mac'];
 
-    $fdb = \App\Models\PortsFdb::hasAccess(Auth::user())
-        ->when(!empty($mac), function ($query) use ($mac) {
-            return $query->where('mac_address', $mac);
-        })
-        ->get();
-
-    if ($fdb->isEmpty()) {
+    if (empty($mac)) {
+            $fdb = \App\Models\PortsFdb::hasAccess(Auth::user())->get();
+    } else {
+            $fdb = \App\Models\PortsFdb::find($mac);
+    }
+    $total_fdb = $fdb->count();
+    if ($total_fdb == 0) {
         api_error(404, 'Fdb do not exist');
     }
 

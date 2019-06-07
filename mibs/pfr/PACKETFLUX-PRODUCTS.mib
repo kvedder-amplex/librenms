@@ -1,0 +1,37 @@
+PACKETFLUX-PRODUCTS-MIB DEFINITIONS ::= BEGIN
+    IMPORTS
+    MODULE-IDENTITY, OBJECT-IDENTITY
+        FROM SNMPv2-SMI
+    packetfluxModuleIdentities, packetfluxProductIDs
+        FROM PACKETFLUX-SMI;
+
+    packetfluxProductsMIB MODULE-IDENTITY
+        LAST-UPDATED        "201807071259Z"
+        ORGANIZATION        "PacketFlux Technologies"
+        CONTACT-INFO        "custsvc@packetflux.com http://www.packetflux.com" 
+        DESCRIPTION         "This module defines the object identifiers which
+                            are used in sysObjectID"
+
+        REVISION            "201807071259Z"
+        DESCRIPTION         "initial version of this module"
+        ::= { packetfluxModuleIdentities 2 }
+
+
+    sitemonitorBase OBJECT-IDENTITY
+        STATUS              current
+        DESCRIPTION         "The original SiteMonitor Base and Base II"
+        ::= { packetfluxProductIDs 1 }
+
+    standbyPowerController OBJECT-IDENTITY
+        STATUS              current
+        DESCRIPTION         "Standby Power Controller"
+        ::= { packetfluxProductIDs 2 }
+
+    rackInjector OBJECT-IDENTITY
+        STATUS              current
+        DESCRIPTION         "PacketFlux RackInjector"
+        ::= { packetfluxProductIDs 3 }
+
+
+END
+

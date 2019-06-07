@@ -5,10 +5,6 @@
 @append
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-
     <div id="public-status">
         <div class="well">
             <div class="status-header">@lang('System Status')
@@ -51,10 +47,6 @@
                 @include('auth.login-form')
             </div>
         </div>
-    </div>
-        </div>
-    </div>
-</div>
 @endsection
 
 @section('css')

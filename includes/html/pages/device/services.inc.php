@@ -99,7 +99,6 @@ if (count($services) > '0') {
 
         if ($vars['view'] == 'details') {
             // if we have a script for this check, use it.
-            $check_ds = null;
             $check_script = $config['install_dir'] . '/includes/services/check_' . strtolower($service['service_type']) . '.inc.php';
             if (is_file($check_script)) {
                 include $check_script;
@@ -113,8 +112,8 @@ if (count($services) > '0') {
             $graphs = json_decode($service['service_ds'], true);
             foreach ($graphs as $k => $v) {
                 $graph_array['device'] = $device['device_id'];
-                $graph_array['type'] = 'service_graph';
-                $graph_array['id'] = $service['service_id'];
+                $graph_array['type'] = 'device_service';
+                $graph_array['service'] = $service['service_id'];
                 $graph_array['ds'] = $k;
 
                 echo '<tr>';

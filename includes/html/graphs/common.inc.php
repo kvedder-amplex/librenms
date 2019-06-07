@@ -1,17 +1,15 @@
 <?php
 
-use LibreNMS\Util\Clean;
-
 if ($_GET['from']) {
-    $from = preg_match('/(-\d+[hdm]|now)/', $_GET['from']) ? $_GET['from'] : (int)$_GET['from'];
+    $from = mres($_GET['from']);
 }
 
 if ($_GET['to']) {
-    $to = preg_match('/(-?\d+[hdm]|now)/', $_GET['to']) ? $_GET['to'] : (int)$_GET['to'];
+    $to = mres($_GET['to']);
 }
 
 if ($_GET['width']) {
-    $width = (int)$_GET['width'];
+    $width = mres($vars['width']);
 }
 
 if ($config['trim_tobias']) {
@@ -19,7 +17,7 @@ if ($config['trim_tobias']) {
 }
 
 if ($_GET['height']) {
-    $height = (int)$_GET['height'];
+    $height = mres($vars['height']);
 }
 
 if ($_GET['inverse']) {
@@ -58,7 +56,7 @@ if ($_GET['title'] == 'yes') {
 }
 
 if (isset($_GET['graph_title'])) {
-    $rrd_options .= " --title='" . Clean::alphaDashSpace($_GET['graph_title']) . "' ";
+    $rrd_options .= " --title='".$_GET['graph_title']."' ";
 }
 
 if (!isset($scale_min) && !isset($scale_max)) {
@@ -82,14 +80,14 @@ if (isset($scale_rigid)) {
 }
 
 $rrd_options .= ' -E --start '.$from.' --end '.$to.' --width '.$width.' --height '.$height.' ';
-$rrd_options .= $config['rrdgraph_def_text'].' -c FONT#'.$config['rrdgraph_def_text_color'];
+$rrd_options .= $config['rrdgraph_def_text'];
 
 if ($_GET['bg']) {
-    $rrd_options .= ' -c CANVAS#' . Clean::alphaDash($_GET['bg']) . ' ';
+    $rrd_options .= ' -c CANVAS#'.mres($_GET['bg']).' ';
 }
 
 if ($_GET['font']) {
-    $rrd_options .= ' -c FONT#' . Clean::alphaDash($_GET['font']) . ' ';
+    $rrd_options .= ' -c FONT#'.mres($_GET['font']).' ';
 }
 
 // $rrd_options .= " -c BACK#FFFFFF";

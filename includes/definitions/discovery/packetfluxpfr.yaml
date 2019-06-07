@@ -1,0 +1,30 @@
+mib: PACKETFLUX-SENSORS-MIB:PACKETFLUX-GNSS-MIB
+modules:
+    sensors:
+        voltage:
+            data:
+                -
+                    oid: voltageSensorValue
+                    num_oid: '.1.3.6.1.4.1.32050.3.2.1.1.4.{{ $index }}'
+                    divisor: 1000000
+                    descr: Voltage {{ $subindex1 }}
+
+        temperature:
+            data:
+                -
+                    oid: temperatureSensorValue
+                    num_oid: '.1.3.6.1.4.1.32050.3.2.3.1.4.{{ $index }}'
+                    divisor: 100
+                    descr: Temperature {{ $subindex1 }}
+        state:
+            data:
+                -
+                    oid: gnssFixType
+                    num_oid: '.1.3.6.1.4.1.32050.3.4.1.1.12.{{ $index }}'
+                    descr: GPS Fix
+                    states:
+                        - { value: 0, generic: 3, graph: 0, descr: unknown }
+                        - { value: 1, generic: 2, graph: 1, descr: nofix }
+                        - { value: 2, generic: 0, graph: 2, descr: fix2d }
+                        - { value: 3, generic: 0, graph: 3, descr: fix3d }
+                        - { value: 4, generic: 0, graph: 4, descr: diff3d }

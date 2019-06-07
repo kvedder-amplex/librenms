@@ -34,10 +34,6 @@ foreach ($output_current as $index => $data) {
     if (count($output_current) > 1) {
         $descr .= " Phase $index";
     }
-    if (is_array($data['upsOutputCurrent'])) {
-        $data['upsOutputCurrent'] = $data['upsOutputCurrent'][0];
-        $oid .= ".0";
-    }
 
     discover_sensor(
         $valid['sensor'],
@@ -65,10 +61,6 @@ foreach ($input_current as $index => $data) {
     if (count($input_current) > 1) {
         $descr .= " Phase $index";
     }
-    if (is_array($data['upsInputCurrent'])) {
-        $data['upsInputCurrent'] = $data['upsInputCurrent'][0];
-        $oid .= ".0";
-    }
 
     discover_sensor(
         $valid['sensor'],
@@ -95,10 +87,6 @@ foreach ($bypass_current as $index => $data) {
     $descr = 'Bypass';
     if (count($bypass_current) > 1) {
         $descr .= " Phase $index";
-    }
-    if (is_array($data['upsBypassCurrent'])) {
-        $data['upsBypassCurrent'] = $data['upsBypassCurrent'][0];
-        $oid .= ".0";
     }
 
     discover_sensor(

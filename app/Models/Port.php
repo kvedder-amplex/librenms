@@ -129,7 +129,6 @@ class Port extends BaseModel
         return $query->where([
             ['deleted', '=', 0],
             ['ignore', '=', 0],
-            ['disabled', '=', 0],
             ['ifOperStatus', '=', 'up'],
         ]);
     }
@@ -143,7 +142,6 @@ class Port extends BaseModel
         return $query->where([
             ['deleted', '=', 0],
             ['ignore', '=', 0],
-            ['disabled', '=', 0],
             ['ifOperStatus', '=', 'down'],
             ['ifAdminStatus', '=', 'up'],
         ]);
@@ -155,12 +153,7 @@ class Port extends BaseModel
      */
     public function scopeIsShutdown($query)
     {
-        return $query->where([
-            ['deleted', '=', 0],
-            ['ignore', '=', 0],
-            ['disabled', '=', 0],
-            ['ifAdminStatus', '=', 'down'],
-        ]);
+        return $query->where('ifAdminStatus', 'down');
     }
 
     /**
@@ -183,7 +176,8 @@ class Port extends BaseModel
     {
         return $query->where([
             ['deleted', '=', 0],
-            ['disabled', '=', 1],
+            ['ignore', '=', 0],
+            ['ifAdminStatus', '=', 'down'],
         ]);
     }
 
@@ -193,11 +187,7 @@ class Port extends BaseModel
      */
     public function scopeHasErrors($query)
     {
-        return $query->where([
-            ['deleted', '=', 0],
-            ['ignore', '=', 0],
-            ['disabled', '=', 0],
-        ])->where(function ($query) {
+        return $query->where(function ($query) {
             /** @var Builder $query */
             $query->where('ifInErrors_delta', '>', 0)
                 ->orWhere('ifOutErrors_delta', '>', 0);

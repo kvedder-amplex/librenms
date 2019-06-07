@@ -22,6 +22,6 @@
                 eventtype: "{{ $eventtype }}"
             };
         },
-        url: "{{ url('/ajax/table/eventlog') }}"
+        url: "ajax/table/eventlog"
     });
 </script>

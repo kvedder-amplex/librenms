@@ -26,19 +26,27 @@
 namespace App\Http\ViewComposers;
 
 use App\Models\AlertRule;
+use App\Models\Application;
 use App\Models\BgpPeer;
+use App\Models\CefSwitching;
+use App\Models\Component;
 use App\Models\Device;
 use App\Models\DeviceGroup;
 use App\Models\Location;
 use App\Models\Notification;
+use App\Models\OspfInstance;
 use App\Models\Package;
+use App\Models\Port;
+use App\Models\Pseudowire;
+use App\Models\Sensor;
+use App\Models\Service;
 use App\Models\User;
-use App\Models\Vminfo;
+use App\Models\Vrf;
 use App\Models\WirelessSensor;
 use Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use LibreNMS\Config;
-use LibreNMS\Util\ObjectCache;
 
 class MenuComposer
 {
@@ -57,65 +65,93 @@ class MenuComposer
         $vars['navbar'] = in_array(Config::get('site_style'), ['mono', 'dark']) ? 'navbar-inverse' : '';
 
         $vars['project_name'] = Config::get('project_name', 'LibreNMS');
-        $site_style = Config::get('site_style', 'light');
-        $vars['title_image'] = Config::get('title_image', "images/librenms_logo_$site_style.svg");
+        $vars['title_image'] = asset(Config::get('title_image', 'images/librenms_logo_light.svg'));
 
         // Device menu
-        $vars['device_groups'] = DeviceGroup::hasAccess($user)->orderBy('name')->get(['device_groups.id', 'name', 'desc']);
+        $vars['device_groups'] = DeviceGroup::hasAccess($user)->select('device_groups.id', 'name', 'desc')->get();
         $vars['package_count'] = Package::hasAccess($user)->count();
 
-        $vars['device_types'] = Device::hasAccess($user)->select('type')->distinct()->where('type', '!=', '')->orderBy('type')->pluck('type');
+        $vars['device_types'] = Device::hasAccess($user)->select('type')->distinct()->get()->pluck('type')->filter();
 
-        $vars['locations'] = (Config::get('show_locations') && Config::get('show_locations_dropdown')) ?
-            Location::hasAccess($user)->where('location', '!=', '')->orderBy('location')->get(['location', 'id']) :
-            collect();
-        $vars['show_vmwinfo'] = Vminfo::hasAccess($user)->exists();
+        if (Config::get('show_locations') && Config::get('show_locations_dropdown')) {
+            $vars['locations'] = Location::hasAccess($user)->select('location')->get()->map->display()->filter();
+        } else {
+            $vars['locations'] = [];
+        }
 
         // Service menu
         if (Config::get('show_services')) {
-            $vars['service_counts'] = ObjectCache::serviceCounts(['warning', 'critical']);
+            $vars['service_status'] = Service::hasAccess($user)->groupBy('service_status')
+                ->select('service_status', DB::raw('count(*) as count'))
+                ->whereIn('service_status', [1, 2])
+                ->get()
+                ->keyBy('service_status');
+
+            $warning = $vars['service_status']->get(1);
+            $vars['service_warning'] = $warning ? $warning->count : 0;
+            $critical = $vars['service_status']->get(2);
+            $vars['service_critical'] = $critical ? $critical->count : 0;
         }
 
         // Port menu
-        $vars['port_counts'] = ObjectCache::portCounts(['errored', 'ignored', 'deleted', 'shutdown', 'down']);
-        $vars['port_counts']['pseudowire'] = Config::get('enable_pseudowires') ? ObjectCache::portCounts(['pseudowire'])['pseudowire'] : 0;
-
-        $vars['port_counts']['alerted'] = 0; // not actually supported on old...
-        $vars['custom_port_descr'] = collect(\LibreNMS\Config::get('custom_descr', []))
-            ->filter()
-            ->map(function ($descr) {
-                return strtolower($descr);
-            });
-        $vars['port_groups_exist'] = Config::get('int_customers') ||
-            Config::get('int_transit') ||
-            Config::get('int_peering') ||
-            Config::get('int_core') ||
-            Config::get('int_l2tp') ||
-            $vars['custom_port_descr']->isNotEmpty();
+        $vars['port_counts'] = [
+            'count' => Port::hasAccess($user)->count(),
+            'up' => Port::hasAccess($user)->isUp()->count(),
+            'down' => Port::hasAccess($user)->isDown()->count(),
+            'shutdown' => Port::hasAccess($user)->isDisabled()->count(),
+            'errored' => Port::hasAccess($user)->hasErrors()->count(),
+            'ignored' => Port::hasAccess($user)->isIgnored()->count(),
+            'deleted' => Port::hasAccess($user)->isDeleted()->count(),
+            'pseudowire' => Config::get('enable_pseudowires') ? Pseudowire::hasAccess($user)->count() : 0,
+            'alerted' => 0, // not actually supported on old...
+        ];
 
         // Sensor menu
-        $vars['sensor_menu'] = ObjectCache::sensors();
+        $sensor_menu = [];
+        $sensor_classes = Sensor::hasAccess($user)->select('sensor_class')->groupBy('sensor_class')->orderBy('sensor_class')->get();
+
+        foreach ($sensor_classes as $sensor_model) {
+            /** @var Sensor $sensor_model */
+            $class = $sensor_model->sensor_class;
+            if (in_array($class, ['fanspeed', 'humidity', 'temperature', 'signal'])) {
+                // First group
+                $group = 0;
+            } elseif (in_array($class, ['current', 'frequency', 'power', 'voltage', 'power_factor', 'power_consumed'])) {
+                // Second group
+                $group = 1;
+            } else {
+                // anything else
+                $group = 2;
+            }
+
+            $sensor_menu[$group][] = $sensor_model;
+        }
+        ksort($sensor_menu); // ensure menu order
+        $vars['sensor_menu'] = $sensor_menu;
 
         // Wireless menu
         $wireless_menu_order = array_keys(\LibreNMS\Device\WirelessSensor::getTypes());
-        $vars['wireless_menu'] = WirelessSensor::hasAccess($user)
+        $vars['wireless_menu'] = WirelessSensor::hasAccess($user)->select('sensor_class')
             ->groupBy('sensor_class')
-            ->get(['sensor_class'])
+            ->get()
             ->sortBy(function ($wireless_sensor) use ($wireless_menu_order) {
                 $pos = array_search($wireless_sensor->sensor_class, $wireless_menu_order);
                 return $pos === false ? 100 : $pos; // unknown at bottom
             });
 
         // Application menu
-        $vars['app_menu'] = ObjectCache::applications();
+        $vars['app_menu'] = Application::hasAccess($user)
+            ->select('app_type', 'app_instance')
+            ->groupBy('app_type', 'app_instance')
+            ->orderBy('app_type')
+            ->get()
+            ->groupBy('app_type');
 
         // Routing menu
         // FIXME queries use relationships to user
         $routing_menu = [];
         if ($user->hasGlobalRead()) {
-            $routing_count = ObjectCache::routing();
-
-            if ($routing_count['vrf']) {
+            if (Vrf::hasAccess($user)->count()) {
                 $routing_menu[] = [
                     [
                         'url' => 'vrf',
@@ -125,17 +161,7 @@ class MenuComposer
                 ];
             }
 
-            if ($routing_count['mpls']) {
-                $routing_menu[] = [
-                    [
-                        'url' => 'mpls',
-                        'icon' => 'tag',
-                        'text' => 'MPLS',
-                    ]
-                ];
-            }
-
-            if ($routing_count['ospf']) {
+            if (OspfInstance::hasAccess($user)->count()) {
                 $routing_menu[] = [
                     [
                         'url' => 'ospf',
@@ -145,7 +171,7 @@ class MenuComposer
                 ];
             }
 
-            if ($routing_count['cisco-otv']) {
+            if (Component::hasAccess($user)->where('type', 'Cisco-OTV')->count()) {
                 $routing_menu[] = [
                     [
                         'url' => 'cisco-otv',
@@ -155,7 +181,7 @@ class MenuComposer
                 ];
             }
 
-            if ($routing_count['bgp']) {
+            if (BgpPeer::hasAccess($user)->count()) {
                 $vars['show_peeringdb'] = Config::get('peeringdb.enabled', false);
                 $vars['bgp_alerts'] = BgpPeer::hasAccess($user)->inAlarm()->count();
                 $routing_menu[] = [
@@ -180,7 +206,7 @@ class MenuComposer
                 $vars['bgp_alerts'] = [];
             }
 
-            if ($routing_count['cef']) {
+            if (CefSwitching::hasAccess($user)->count()) {
                 $routing_menu[] = [
                     [
                         'url' => 'cef',

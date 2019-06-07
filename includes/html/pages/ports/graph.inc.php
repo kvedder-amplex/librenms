@@ -24,13 +24,13 @@ foreach ($ports as $port) {
 
         $graph_type = 'port_'.$subformat;
 
-        if (session('widescreen')) {
+        if ($_SESSION['widescreen']) {
             $width = 357;
         } else {
             $width = 315;
         }
 
-        if (session('widescreen')) {
+        if ($_SESSION['widescreen']) {
             $width_div = 438;
         } else {
             $width_div = 393;

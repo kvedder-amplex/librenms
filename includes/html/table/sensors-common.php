@@ -94,7 +94,7 @@ foreach (dbFetchRows($sql, $param) as $sensor) {
 
     $link = generate_url(array('page' => 'device', 'device' => $sensor['device_id'], 'tab' => $tab, 'metric' => $sensor['sensor_class']));
 
-    $overlib_content = '<div style="width: 580px;"><span class="overlib-text">'.$sensor['hostname'].' - '.$sensor['sensor_descr'].'</span>';
+    $overlib_content = '<div style="width: 580px;"><h2>'.$sensor['hostname'].' - '.$sensor['sensor_descr'].'</h1>';
     foreach (array('day', 'week', 'month', 'year') as $period) {
         $graph_array['from'] = $config['time'][$period];
         $overlib_content    .= str_replace('"', "\\'", generate_graph_tag($graph_array));
@@ -117,7 +117,7 @@ foreach (dbFetchRows($sql, $param) as $sensor) {
         $state_translation = dbFetchRows('SELECT * FROM state_translations as ST, sensors_to_state_indexes as SSI WHERE ST.state_index_id=SSI.state_index_id AND SSI.sensor_id = ? AND ST.state_value = ? ', array($sensor['sensor_id'], $sensor['sensor_current']));
 
         //$current_label = get_state_label_color($sensor);
-        $sensor_current = get_state_label($state_translation['0']['state_generic_value'], (!empty($state_translation['0']['state_descr'])) ? $state_translation[0]['state_descr'] . " (".$sensor['sensor_current'].")" : $sensor['sensor_current']);
+        $sensor_current = get_state_label($sensor['state_generic_value'], (!empty($state_translation['0']['state_descr'])) ? $state_translation[0]['state_descr'] . " (".$sensor['sensor_current'].")" : $sensor['sensor_current']);
     } else {
         // we have another sensor
         $current_label = get_sensor_label_color($sensor);

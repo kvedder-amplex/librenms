@@ -20,5 +20,5 @@ $no_refresh = true;
 <h3>Plugins</h3>
 <hr>
 <?php
-echo \LibreNMS\Plugins::call('port_container', [$device, $port]);
+\LibreNMS\Plugins::call('port_container', [$device, $port]);
 

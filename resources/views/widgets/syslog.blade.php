@@ -23,6 +23,6 @@
                 device: '{{ $device ?: '' }}'
             };
         },
-        url: "{{ url('/ajax/table/syslog') }}"
+        url: "ajax/table/syslog"
     });
 </script>

@@ -1,7 +1,5 @@
 <?php
 
-use LibreNMS\Config;
-
 // Push $_GET into $vars to be compatible with web interface naming
 foreach ($_GET as $name => $value) {
     $vars[$name] = $value;
@@ -26,7 +24,6 @@ $legend   = $vars['legend'];
 $output   = (!empty($vars['output']) ? $vars['output'] : 'default');
 $from = (isset($vars['from']) ? $vars['from'] : time() - 60 * 60 * 24);
 $to   = (isset($vars['to']) ? $vars['to'] : time());
-$graph_type = (isset($vars['graph_type']) ? $vars['graph_type'] : Config::get('webui.graph_type'));
 
 if ($from < 0) {
     $from = ($to + $from);
@@ -100,7 +97,7 @@ if ($error_msg) {
     }
 } else {
     // $rrd_options .= " HRULE:0#999999";
-    if ($graph_type === 'svg') {
+    if ($config['webui']['graph_type'] === 'svg') {
         $rrd_options .= " --imgformat=SVG";
         if ($width < 350) {
             $rrd_options .= " -m 0.75 -R light";
@@ -133,7 +130,7 @@ if ($error_msg) {
             if (is_file($graphfile)) {
                 if (!$debug) {
                     set_image_type();
-                    if ($config['trim_tobias'] && $graph_type !== 'svg') {
+                    if ($config['trim_tobias'] && $config['webui']['graph_type'] !== 'svg') {
                         list($w, $h, $type, $attr) = getimagesize($graphfile);
                         $src_im                    = imagecreatefrompng($graphfile);
                         $src_x = '0';
@@ -160,7 +157,7 @@ if ($error_msg) {
                                 $imagedata = ob_get_contents();
                                 imagedestroy($png);
                             ob_end_clean();
-
+                            
                             $base64_output = base64_encode($imagedata);
                         } else {
                             imagepng($dst_im);

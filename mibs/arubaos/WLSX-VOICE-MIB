@@ -1,4 +1,4 @@
---- ArubaOS 8.5.0.0_70258
+--- ArubaOS 6.5.2.0_59123
 -- vim:set ts=4 sw=4:
 WLSX-VOICE-MIB DEFINITIONS ::= BEGIN
 
@@ -68,7 +68,7 @@ WLSX-VOICE-MIB DEFINITIONS ::= BEGIN
    wlsxVoiceCdrInfoGroup     	OBJECT IDENTIFIER ::= { wlsxVoiceStatsGroup 1 }
    wlsxVoiceCallCtrsGroup		OBJECT IDENTIFIER ::= { wlsxVoiceStatsGroup 2 }
    wlsxVoiceClientInfoGroup     OBJECT IDENTIFIER ::= { wlsxVoiceStatsGroup 3 }
-   wlsxVoiceCallCtrPerClientInfoGroup	OBJECT IDENTIFIER ::= { wlsxVoiceStatsGroup 4 }
+   wlsxVoiceAPBssidInfoGroup	OBJECT IDENTIFIER ::= { wlsxVoiceStatsGroup 4 }
    wlsxVoiceClientLocationInfoGroup     OBJECT IDENTIFIER ::= { wlsxVoiceStatsGroup 5 }
 
    wlsxVoiceCdrTotal  OBJECT-TYPE 
@@ -117,7 +117,7 @@ WLSX-VOICE-MIB DEFINITIONS ::= BEGIN
 	voiceCdrStatus			ArubaCallStates,
 	voiceCdrReason			DisplayString,
 	voiceCdrDuration			Integer32,
-	voiceCdrRValueA			Integer32,
+	voiceCdrRValue			Integer32,
 	voiceCdrApSwitchDelay		Integer32,
 	voiceCdrCodec			Integer32,
 	voiceCdrApName			DisplayString,
@@ -125,14 +125,7 @@ WLSX-VOICE-MIB DEFINITIONS ::= BEGIN
 	voiceCdrBssid			DisplayString,
 	voiceCdrEssid			DisplayString,
 	voiceCdrHandovers			Integer32,
-	voiceCdrMOS				DisplayString,
-	voiceCdrDelayA           DisplayString,
-	voiceCdrJitterA			DisplayString,
-	voiceCdrPktLossA			DisplayString,
-	voiceCdrRValueC			Integer32,
-	voiceCdrDelayC           DisplayString,
-	voiceCdrJitterC			DisplayString,
-	voiceCdrPktLossC			DisplayString
+	voiceCdrMOS				Integer32
     }
    	voiceCdrId OBJECT-TYPE
          SYNTAX       Unsigned32
@@ -207,7 +200,7 @@ WLSX-VOICE-MIB DEFINITIONS ::= BEGIN
    	voiceCdrSetupTime OBJECT-TYPE
          SYNTAX       Unsigned32
          MAX-ACCESS   read-only
-         STATUS       deprecated
+         STATUS       current
          DESCRIPTION
             "
 			Voice CDR setup time
@@ -254,7 +247,7 @@ WLSX-VOICE-MIB DEFINITIONS ::= BEGIN
             "
         ::= { wlsxVoiceCdrEntry 12 }
 
-   	voiceCdrRValueA OBJECT-TYPE
+   	voiceCdrRValue OBJECT-TYPE
          SYNTAX       Integer32
          MAX-ACCESS   read-only
          STATUS       current
@@ -267,7 +260,7 @@ WLSX-VOICE-MIB DEFINITIONS ::= BEGIN
    	voiceCdrApSwitchDelay OBJECT-TYPE
          SYNTAX       Integer32
          MAX-ACCESS   read-only
-         STATUS       deprecated
+         STATUS       current
          DESCRIPTION
             "
 			Voice CDR AP switch delay
@@ -336,84 +329,15 @@ WLSX-VOICE-MIB DEFINITIONS ::= BEGIN
 
 
    	voiceCdrMOS OBJECT-TYPE
-         SYNTAX       DisplayString
+         SYNTAX       Integer32
          MAX-ACCESS   read-only
-         STATUS       current
+         STATUS       deprecated
          DESCRIPTION
             "
 			Voice CDR MOS
             "
         ::= { wlsxVoiceCdrEntry 21 }
-		
-	voiceCdrDelayA OBJECT-TYPE
-         SYNTAX       DisplayString
-         MAX-ACCESS   read-only
-         STATUS       current
-         DESCRIPTION
-            "
-			Voice CDR Delay at AP
-            "
-        ::= { wlsxVoiceCdrEntry 22 }
-	
-	voiceCdrJitterA OBJECT-TYPE
-         SYNTAX       DisplayString
-         MAX-ACCESS   read-only
-         STATUS       current
-         DESCRIPTION
-            "
-			Voice CDR Jitter at AP
-            "
-        ::= { wlsxVoiceCdrEntry 23 }
-		
-	voiceCdrPktLossA OBJECT-TYPE
-         SYNTAX       DisplayString
-         MAX-ACCESS   read-only
-         STATUS       current
-         DESCRIPTION
-            "
-			Voice CDR packet loss at AP
-            "
-        ::= { wlsxVoiceCdrEntry 24 }
-		
-	voiceCdrRValueC OBJECT-TYPE
-         SYNTAX       Integer32
-         MAX-ACCESS   read-only
-         STATUS       current
-         DESCRIPTION
-            "
-			Voice CDR R-Value
-            "
-        ::= { wlsxVoiceCdrEntry 25 }
 
-	voiceCdrDelayC OBJECT-TYPE
-         SYNTAX       DisplayString
-         MAX-ACCESS   read-only
-         STATUS       current
-         DESCRIPTION
-            "
-			Voice CDR Delay at Controller
-            "
-        ::= { wlsxVoiceCdrEntry 26 }
-	
-	voiceCdrJitterC OBJECT-TYPE
-         SYNTAX       DisplayString
-         MAX-ACCESS   read-only
-         STATUS       current
-         DESCRIPTION
-            "
-			Voice CDR Jitter at Controller
-            "
-        ::= { wlsxVoiceCdrEntry 27 }
-		
-	voiceCdrPktLossC OBJECT-TYPE
-         SYNTAX       DisplayString
-         MAX-ACCESS   read-only
-         STATUS       current
-         DESCRIPTION
-            "
-			Voice CDR packet loss at Controller
-            "
-        ::= { wlsxVoiceCdrEntry 28 }	
 --
 -- end VoiceCdrEntry
 --
@@ -616,17 +540,13 @@ WLSX-VOICE-MIB DEFINITIONS ::= BEGIN
    VoiceClientEntry ::=
 	SEQUENCE {
 		voiceClientIp			IpAddress,
-		voiceClientProtocol			DisplayString,  
-		voiceClientRegState			DisplayString,
+		voiceClientProtocol			ArubaVoipProtocol,  
+		voiceClientRegState			ArubaVoipRegState,
 		voiceClientContactName		DisplayString,
 		voiceClientServerName		DisplayString,
 		voiceClientEssid			DisplayString,
 		voiceClientVlanId			ArubaVlanValidRange,
-		voiceClientTunnelId			Integer32,
-		voiceClientAvgDelay			DisplayString,
-		voiceClientAvgJitter		DisplayString,
-		voiceClientAvgPktLoss		DisplayString,
-		voiceClientAvgCallDuration	Integer32
+		voiceClientTunnelId			Integer32
     }
 
    	voiceClientIp OBJECT-TYPE
@@ -640,7 +560,7 @@ WLSX-VOICE-MIB DEFINITIONS ::= BEGIN
         ::= { wlsxVoiceClientEntry 1 }
 
    	voiceClientProtocol OBJECT-TYPE
-         SYNTAX       DisplayString 
+         SYNTAX       ArubaVoipProtocol
          MAX-ACCESS   read-only
          STATUS       current
          DESCRIPTION
@@ -650,7 +570,7 @@ WLSX-VOICE-MIB DEFINITIONS ::= BEGIN
         ::= { wlsxVoiceClientEntry 2 }
 
    	voiceClientRegState OBJECT-TYPE
-         SYNTAX       DisplayString 
+         SYNTAX       ArubaVoipRegState
          MAX-ACCESS   read-only
          STATUS       current
          DESCRIPTION
@@ -692,7 +612,7 @@ WLSX-VOICE-MIB DEFINITIONS ::= BEGIN
    	voiceClientVlanId OBJECT-TYPE
          SYNTAX       ArubaVlanValidRange
          MAX-ACCESS   read-only
-         STATUS       deprecated
+         STATUS       current
          DESCRIPTION
             "
 			Voice client VLAN id 
@@ -702,188 +622,294 @@ WLSX-VOICE-MIB DEFINITIONS ::= BEGIN
    	voiceClientTunnelId OBJECT-TYPE
          SYNTAX       Integer32
          MAX-ACCESS   read-only
-         STATUS       deprecated
+         STATUS       current
          DESCRIPTION
             "
 			Voice client tunnel ID
             "
         ::= { wlsxVoiceClientEntry 8 }
-		
-	voiceClientAvgDelay OBJECT-TYPE
-         SYNTAX       DisplayString
-         MAX-ACCESS   read-only
-         STATUS       current
-         DESCRIPTION
-            "
-			Voice client Avg Delay
-            "
-        ::= { wlsxVoiceClientEntry 9 }
-		
-	voiceClientAvgJitter OBJECT-TYPE
-         SYNTAX       DisplayString
-         MAX-ACCESS   read-only
-         STATUS       current
-         DESCRIPTION
-            "
-			Voice client average Jitter
-            "
-        ::= { wlsxVoiceClientEntry 10 }
-		
-	voiceClientAvgPktLoss OBJECT-TYPE
-         SYNTAX       DisplayString
-         MAX-ACCESS   read-only
-         STATUS       current
-         DESCRIPTION
-            "
-			Voice client average packet loss
-            "
-        ::= { wlsxVoiceClientEntry 11 }
-		
-	voiceClientAvgCallDuration OBJECT-TYPE
-         SYNTAX       Integer32
-         MAX-ACCESS   read-only
-         STATUS       current
-         DESCRIPTION
-            "
-			Voice client avg call duration
-            "
-        ::= { wlsxVoiceClientEntry 12 }
-		
 
 --
 -- end voiceClientEntry
 --
 
---
--- begin voice call counter per client entry
---
-
-      
-   wlsxVoiceCallCtrPerClientTotal  OBJECT-TYPE 
+    
+   wlsxVoiceAPBssidTotal  OBJECT-TYPE 
          SYNTAX       Unsigned32
          MAX-ACCESS   read-only
          STATUS       current
          DESCRIPTION
             "
-			Total number voice clients.
+			Total Number of active voip info in the controller.
             "
-        ::= { wlsxVoiceCallCtrPerClientInfoGroup 1 }
+        ::= { wlsxVoiceAPBssidInfoGroup 1 }
 
-   wlsxVoiceCallCtrPerClientTable  OBJECT-TYPE
-		SYNTAX       SEQUENCE OF VoiceCallCtrPerClientEntry 
-        MAX-ACCESS   not-accessible		
-        STATUS       current 
-        DESCRIPTION 
+   wlsxVoiceAPBssidTable  OBJECT-TYPE 
+	  SYNTAX       SEQUENCE OF VoiceAPBssidEntry
+	  MAX-ACCESS   not-accessible		
+      STATUS       current 
+      DESCRIPTION 
 	  	"
-			This table lists all voice client Location Info
+			This table lists Active Voip Info. 
 		"
-      ::= { wlsxVoiceCallCtrPerClientInfoGroup 2 } 
+      ::= { wlsxVoiceAPBssidInfoGroup 2 } 
+
       
-   wlsxVoiceCallCtrPerClientEntry OBJECT-TYPE 
-	  SYNTAX       VoiceCallCtrPerClientEntry 
+   wlsxVoiceAPBssidEntry OBJECT-TYPE 
+	  SYNTAX       VoiceAPBssidEntry 
 	  MAX-ACCESS   not-accessible		
       STATUS       current 
       DESCRIPTION 
              ""
-	  INDEX { wlanStaPhyAddress }
-      ::= { wlsxVoiceCallCtrPerClientTable 1 } 
+	  INDEX {wlanAPMacAddress, wlanAPRadioNumber, wlanAPBSSID}
+      ::= { wlsxVoiceAPBssidTable 1 } 
+      
 
-
-   VoiceCallCtrPerClientEntry ::=
-	SEQUENCE {
-		voiceCallCtrTotal          Unsigned32,
-		voiceCallCtrSuccess	    Unsigned32,  
-		voiceCallCtrFailed	  		Unsigned32,
-		voiceCallCtrRejected	    Unsigned32,
-		voiceCallCtrAborted  	    Unsigned32,
-		voiceCallCtrOrig	        Unsigned32,
-		voiceCallCtrRecvd	        Unsigned32,
-		voiceCallCtrActive	        Unsigned32
+   VoiceAPBssidEntry ::=
+     SEQUENCE {
+	voiceAPBssidName				DisplayString,
+	voiceAPBssidGroup				DisplayString,
+	voiceAPBssidIp				IpAddress,
+	voiceAPBssidTotCalls			Unsigned32,
+	voiceAPBssidVoiceType			DisplayString,
+	voiceAPBssidFlag				BITS,
+	voiceAPBssidUpTime			TimeTicks,
+	voiceAPBssid100Sent			Counter32,
+	voiceAPBssid503Sent			Counter32,
+	voiceAPBssidExtraCallDisc		Counter32,
+	voiceAPBssidKickedOff			Counter32,
+	voiceAPBssidTspecDenied		Counter32,
+	voiceAPBssidCacFlag			ArubaVoiceCacBit,		
+	voiceAPBssidTotVoiceClients   Unsigned32,
+	voiceAPBssidCallsSCCP			Unsigned32,
+	voiceAPBssidCallsSIP			Unsigned32,
+    voiceAPBssidCallsSIPS           Unsigned32,
+	voiceAPBssidCallsSVP			Unsigned32,
+	voiceAPBssidCallsVocera		Unsigned32,
+	voiceAPBssidCallsNoe		    Unsigned32,
+	voiceAPBssidEssid			DisplayString
     }
+    
+   	voiceAPBssidName OBJECT-TYPE
+         SYNTAX       DisplayString
+         MAX-ACCESS   read-only
+         STATUS       current
+         DESCRIPTION
+            "
+			Voice AP Name
+            "
+        ::= { wlsxVoiceAPBssidEntry 1 }
+        
+   	voiceAPBssidGroup OBJECT-TYPE
+         SYNTAX       DisplayString
+         MAX-ACCESS   read-only
+         STATUS       current
+         DESCRIPTION
+            "
+			Voice AP Group
+            "
+        ::= { wlsxVoiceAPBssidEntry 2 }
+        
+   	voiceAPBssidIp OBJECT-TYPE
+         SYNTAX       IpAddress
+         MAX-ACCESS   read-only
+         STATUS       current
+         DESCRIPTION
+            "
+			Voice AP IP address
+            "
+        ::= { wlsxVoiceAPBssidEntry 3 }
 
-   	voiceCallCtrTotal OBJECT-TYPE
+   	voiceAPBssidTotCalls OBJECT-TYPE
          SYNTAX       Unsigned32
          MAX-ACCESS   read-only
          STATUS       current
          DESCRIPTION
             "
-			Voice total calls made by client 
+			Voice AP current calls
             "
-        ::= { wlsxVoiceCallCtrPerClientEntry 1 }
+        ::= { wlsxVoiceAPBssidEntry 4 }
+        
+   	voiceAPBssidVoiceType OBJECT-TYPE
+         SYNTAX       DisplayString
+         MAX-ACCESS   read-only
+         STATUS       current
+         DESCRIPTION
+            "
+			Voice AP Type
+            "
+        ::= { wlsxVoiceAPBssidEntry 5 }
+         
+   	voiceAPBssidFlag OBJECT-TYPE
+		SYNTAX 	BITS {
+			apRemoteAP(0),
+			apPPPOE(1),
+			apWiredApEnabled(2),
+			apEnet1Mode(3),
+			apActiveLoadBalancing(4),
+			apDisconnectExtraCalls(5),
+			apBatteryBoost(6)
+	    }
+         MAX-ACCESS   read-only
+         STATUS       current
+         DESCRIPTION
+            "
+			Voice AP flag
+            "
+        ::= { wlsxVoiceAPBssidEntry 6 }
+         
+   	voiceAPBssidUpTime OBJECT-TYPE
+         SYNTAX       TimeTicks
+         MAX-ACCESS   read-only
+         STATUS       current
+         DESCRIPTION
+            "
+			Voice AP up time
+            "
+        ::= { wlsxVoiceAPBssidEntry 7 }
+         
+   	voiceAPBssid100Sent OBJECT-TYPE
+         SYNTAX       Counter32
+         MAX-ACCESS   read-only
+         STATUS       current
+         DESCRIPTION
+            "
+			Voice 100 sent
+            "
+        ::= { wlsxVoiceAPBssidEntry 8 }
+         
+   	voiceAPBssid503Sent OBJECT-TYPE
+         SYNTAX       Counter32
+         MAX-ACCESS   read-only
+         STATUS       current
+         DESCRIPTION
+            "
+			Voice 503 sent
+            "
+        ::= { wlsxVoiceAPBssidEntry 9 }
+         
+   	voiceAPBssidExtraCallDisc OBJECT-TYPE
+         SYNTAX       Counter32
+         MAX-ACCESS   read-only
+         STATUS       current
+         DESCRIPTION
+            "
+			Voice AP extra call disconnect
+            "
+        ::= { wlsxVoiceAPBssidEntry 10 }
+         
+   	voiceAPBssidKickedOff OBJECT-TYPE
+         SYNTAX       Counter32
+         MAX-ACCESS   read-only
+         STATUS       deprecated
+         DESCRIPTION
+            "
+			Voice AP kicked off
+            "
+        ::= { wlsxVoiceAPBssidEntry 11 }
+         
+   	voiceAPBssidTspecDenied OBJECT-TYPE
+         SYNTAX       Counter32
+         MAX-ACCESS   read-only
+         STATUS       current
+         DESCRIPTION
+            "
+			Voice AP Tspec Denied
+            "
+        ::= { wlsxVoiceAPBssidEntry 12 }
+         
+   	voiceAPBssidCacFlag OBJECT-TYPE
+		SYNTAX 	ArubaVoiceCacBit
+         MAX-ACCESS   read-only
+         STATUS       current
+         DESCRIPTION
+            "
+			Voice AP CAC flag
+            "
+        ::= { wlsxVoiceAPBssidEntry 13 }
 
-   	voiceCallCtrSuccess OBJECT-TYPE
+   	voiceAPBssidTotVoiceClients OBJECT-TYPE
+		SYNTAX 	Unsigned32
+         MAX-ACCESS   read-only
+         STATUS       current
+         DESCRIPTION
+            "
+			Voice AP total number of voice clients
+            "
+        ::= { wlsxVoiceAPBssidEntry 14 }
+
+   	voiceAPBssidCallsSCCP OBJECT-TYPE
          SYNTAX       Unsigned32
          MAX-ACCESS   read-only
          STATUS       current
          DESCRIPTION
             "
-			Voice total successful calls made by client 
+			Voice AP Total SCCP calls
             "
-        ::= { wlsxVoiceCallCtrPerClientEntry 2 }
+        ::= { wlsxVoiceAPBssidEntry 15 }
 
-   	voiceCallCtrFailed OBJECT-TYPE
+   	voiceAPBssidCallsSIP OBJECT-TYPE
          SYNTAX       Unsigned32
          MAX-ACCESS   read-only
          STATUS       current
          DESCRIPTION
             "
-			Voice total failed calls made by client 
+			Voice AP Total SIP calls
             "
-        ::= { wlsxVoiceCallCtrPerClientEntry 3 }
+        ::= { wlsxVoiceAPBssidEntry 16 }
 
-   	voiceCallCtrRejected OBJECT-TYPE
+   	voiceAPBssidCallsSVP OBJECT-TYPE
          SYNTAX       Unsigned32
          MAX-ACCESS   read-only
          STATUS       current
          DESCRIPTION
             "
-			Voice total calls rejected by client
+			Voice AP Total SVP calls
             "
-        ::= { wlsxVoiceCallCtrPerClientEntry 4 }
+        ::= { wlsxVoiceAPBssidEntry 17 }
 
-   	voiceCallCtrAborted OBJECT-TYPE
-         SYNTAX       Unsigned32 
-         MAX-ACCESS   read-only
-         STATUS       current
-         DESCRIPTION
-            "
-			Voice total calls aborted by client 
-            "
-        ::= { wlsxVoiceCallCtrPerClientEntry 5 }
-
-   	voiceCallCtrOrig OBJECT-TYPE
+   	voiceAPBssidCallsVocera OBJECT-TYPE
          SYNTAX       Unsigned32
          MAX-ACCESS   read-only
          STATUS       current
          DESCRIPTION
             "
-			Voice total call originated by client
+			Voice AP Total Vocera calls
             "
-        ::= { wlsxVoiceCallCtrPerClientEntry 6 }
+        ::= { wlsxVoiceAPBssidEntry 18 }
 
-   	voiceCallCtrRecvd OBJECT-TYPE
+   	voiceAPBssidCallsNoe OBJECT-TYPE
          SYNTAX       Unsigned32
          MAX-ACCESS   read-only
          STATUS       current
          DESCRIPTION
             "
-			Voice total calls received by client 
+			Voice AP Total NOE calls
             "
-        ::= { wlsxVoiceCallCtrPerClientEntry 7 }
-		
-	voiceCallCtrActive OBJECT-TYPE
+        ::= { wlsxVoiceAPBssidEntry 19 }
+
+   	voiceAPBssidEssid OBJECT-TYPE
+         SYNTAX       DisplayString
+         MAX-ACCESS   read-only
+         STATUS       current
+         DESCRIPTION
+            "
+			Voice AP ESSID
+            "
+        ::= { wlsxVoiceAPBssidEntry 20 }
+
+   	voiceAPBssidCallsSIPS OBJECT-TYPE
          SYNTAX       Unsigned32
          MAX-ACCESS   read-only
          STATUS       current
          DESCRIPTION
             "
-			Voice total currently aactive calls by client
+			Voice AP Total SIPS calls
             "
-        ::= { wlsxVoiceCallCtrPerClientEntry 8 }
+        ::= { wlsxVoiceAPBssidEntry 21 }
 
 --
--- end call counter per client entry
-
+-- end VoiceApEntry
 --
 
 --

@@ -171,16 +171,14 @@ class Plugins
     /**
      * Call hook for plugin.
      *
-     * @param string $hook Name of hook to call
-     * @param array|false $params Optional array of parameters for hook
-     * @return string
+     * @param string $hook   Name of hook to call
+     * @param array  $params Optional array of parameters for hook
      */
     public static function call($hook, $params = false)
     {
         chdir(Config::get('install_dir') . '/html');
         self::start();
 
-        ob_start();
         if (!empty(self::$plugins[$hook])) {
             foreach (self::$plugins[$hook] as $name) {
                 try {
@@ -194,11 +192,7 @@ class Plugins
                 }
             }
         }
-        $output = ob_get_contents();
-        ob_end_clean();
-
         chdir(Config::get('install_dir'));
-        return $output;
     }
 
     /**

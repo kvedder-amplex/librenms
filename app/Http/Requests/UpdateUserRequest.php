@@ -43,7 +43,6 @@ class UpdateUserRequest extends FormRequest
             'level' => 'int',
             'old_password' => 'nullable|string',
             'new_password' => 'nullable|confirmed|min:' . Config::get('password.min_length', 8),
-            'new_password_confirmation' => 'nullable|same:new_password',
             'dashboard' => 'int',
         ];
     }

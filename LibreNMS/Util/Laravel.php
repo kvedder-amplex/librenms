@@ -59,8 +59,7 @@ class Laravel
         $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
         $request = \Illuminate\Http\Request::capture();
-        // strip .php to make the url helper in non-laravel pages
-        $request->server->set('REQUEST_URI', str_replace('.php', '', $_SERVER['REQUEST_URI']));
+        $request->server->set('REQUEST_URI', '/blank'); // load an empty page since it will be discarded
         $response = $kernel->handle($request);
 
 //        $response->send(); // don't send response, legacy code will

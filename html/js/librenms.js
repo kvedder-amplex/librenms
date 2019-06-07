@@ -148,7 +148,7 @@ function submitCustomRange(frmdata) {
 
 function updateResolution(refresh)
 {
-    $.post(ajax_url + '/set_resolution',
+    $.post('ajax/set_resolution',
         {
             width: $(window).width(),
             height:$(window).height()
@@ -422,7 +422,7 @@ function init_map_marker(leaflet, latlng) {
 function update_location(id, latlng, callback) {
     $.ajax({
         method: 'PATCH',
-        url: ajax_url + '/location/' + id,
+        url: "ajax/location/" + id,
         data: {lat: latlng.lat, lng: latlng.lng}
     }).success(function () {
         toastr.success('Location updated');
@@ -488,7 +488,7 @@ function init_select2(selector, type, data, selected, placeholder) {
         placeholder: placeholder,
         allowClear: true,
         ajax: {
-            url: ajax_url + '/select/' + type,
+            url: 'ajax/select/' + type,
             delay: 150,
             data: data_function
         }

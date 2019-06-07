@@ -57,7 +57,6 @@ if ($_POST['editing']) {
             $update['version']      = null;
             $update['icon']         = null;
             $update['sysName']      = $_POST['sysName'] ? clean($_POST['sysName']) : null;
-            $update['poller_group'] = $poller_group;
         }
 
         $device_tmp = deviceArray($device['hostname'], $community, $snmpver, $port, $transport, $v3, $port_assoc_mode);

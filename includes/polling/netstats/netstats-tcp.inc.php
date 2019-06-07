@@ -2,9 +2,10 @@
 
 use LibreNMS\RRD\RrdDefinition;
 
-if (!starts_with($device['os'], ['Snom', 'asa'])) {
+if (!starts_with($device['os'], array('Snom', 'asa'))) {
     echo ' TCP';
-    $oids = [
+
+    $oids = array(
         'tcpActiveOpens',
         'tcpPassiveOpens',
         'tcpAttemptFails',
@@ -15,35 +16,40 @@ if (!starts_with($device['os'], ['Snom', 'asa'])) {
         'tcpRetransSegs',
         'tcpInErrs',
         'tcpOutRsts',
-    ];
-    $data = snmp_getnext_multi($device, $oids, '-OQUs', 'TCP-MIB');
+    );
 
-    echo ' TCPHC';
-    $hc_oids = [
-        'tcpHCInSegs.0',
-        'tcpHCOutSegs.0',
-    ];
-    $hc_data = snmp_getnext_multi($device, $hc_oids, '-OQUs', 'TCP-MIB');
+    $rrd_def = new RrdDefinition();
+    $snmpstring = '';
+    foreach ($oids as $oid) {
+        $rrd_def->addDataset($oid, 'COUNTER', null, 10000000);
+        $snmpstring .= ' TCP-MIB::'.$oid.'.0';
+    }
 
-    if ((is_numeric($data['tcpInSegs']) && is_numeric($data['tcpOutSegs'])) || (is_numeric($hc_data['tcpHCInSegs']) && is_numeric($hc_data['tcpHCOutSegs']))) {
-        $rrd_def = new RrdDefinition();
-        $fields = [];
+    $snmpstring .= ' tcpHCInSegs.0';
+    $snmpstring .= ' tcpHCOutSegs.0';
+
+    $data = snmp_get_multi($device, $snmpstring, '-OQUs', 'TCP-MIB');
+    $data = $data[0];
+
+    if (isset($data['tcpInSegs']) && isset($data['tcpOutSegs'])) {
+        $fields = array();
         foreach ($oids as $oid) {
-            $rrd_def->addDataset($oid, 'COUNTER', null, 10000000);
-            $fields[$oid] = is_numeric($data[$oid]) ? $data[$oid] : 'U';
+            $fields[$oid] = isset($data[$oid]) ? $data[$oid] : 'U';
         }
 
-        // Replace Segs with HC Segs if we have them.
-        $fields['tcpInSegs'] = !empty($hc_data['tcpHCInSegs']) ? $hc_data['tcpHCInSegs'] : $fields['tcpInSegs'];
-        $fields['tcpOutSegs'] = !empty($hc_data['tcpHCOutSegs']) ? $hc_data['tcpHCOutSegs'] : $fields['tcpOutSegs'];
-    
+        // use HC Segs if we have them.
+        if (isset($data['tcpHCInSegs'])) {
+            if (!empty($data['tcpHCInSegs'])) {
+                $fields['tcpInSegs'] = $data['tcpHCInSegs'];
+                $fields['tcpOutSegs'] = $data['tcpHCOutSegs'];
+            }
+        }
+
         $tags = compact('rrd_def');
         data_update($device, 'netstats-tcp', $tags, $fields);
 
         $graphs['netstat_tcp'] = true;
-
-        unset($rrd_def, $fields, $tags, $oid);
     }
 
-    unset($oids, $hc_oids, $data, $hc_data);
+    unset($oids, $data, $fields, $oid, $snmpstring);
 }//end if

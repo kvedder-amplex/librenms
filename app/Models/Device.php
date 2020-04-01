@@ -542,14 +542,6 @@ class Device extends BaseModel
         ]);
     }
 
-    public function scopeWhereUptime($query, $uptime, $modifier = '<')
-    {
-        return $query->where([
-            ['uptime', '>', 0],
-            ['uptime', $modifier, $uptime]
-        ]);
-    }
-
     public function scopeCanPing(Builder $query)
     {
         return $query->where('disabled', 0)

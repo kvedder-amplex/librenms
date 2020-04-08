@@ -24,6 +24,7 @@
 
 namespace App\Http\Controllers\Ajax;
 
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use LibreNMS\Config;
@@ -70,7 +71,7 @@ class NetCommand extends Controller
             function () use ($proc, $request) {
                 // a bit dirty, bust browser initial cache
                 $ua = $request->header('User-Agent');
-                if (str_contains($ua, ['Chrome', 'Trident'])) {
+                if (Str::contains($ua, ['Chrome', 'Trident'])) {
                     $char = "\f"; // line feed
                 } else {
                     $char = '';

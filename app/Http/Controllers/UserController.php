@@ -24,6 +24,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\AuthLog;
@@ -179,7 +180,7 @@ class UserController extends Controller
             }
         }
 
-        return redirect(route(str_contains(URL::previous(), 'preferences') ? 'preferences.index' : 'users.index'));
+        return redirect(route(Str::contains(URL::previous(), 'preferences') ? 'preferences.index' : 'users.index'));
     }
 
     /**

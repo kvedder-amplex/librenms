@@ -24,6 +24,7 @@
 
 namespace LibreNMS\Tests;
 
+use Illuminate\Support\Str;
 use LibreNMS\Config;
 
 class OSDiscoveryTest extends TestCase
@@ -63,7 +64,7 @@ class OSDiscoveryTest extends TestCase
             return basename($file, '.snmprec');
         }, glob($glob));
         $files = array_filter($files, function ($file) use ($os_name) {
-            return $file == $os_name || starts_with($file, $os_name.'_');
+            return $file == $os_name || Str::startsWith($file, $os_name.'_');
         });
 
         if (empty($files)) {

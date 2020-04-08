@@ -1,6 +1,6 @@
 <?php
 /**
- * EventlogController.php
+ * EventlogController.php.
  *
  * -Description-
  *
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2018 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
@@ -55,7 +54,7 @@ class EventlogController extends TableController
     }
 
     /**
-     * Defines the base query for this resource
+     * Defines the base query for this resource.
      *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
@@ -86,7 +85,7 @@ class EventlogController extends TableController
             if (is_numeric($eventlog->reference)) {
                 $port = $eventlog->related;
                 if (isset($port)) {
-                    return '<b>' . Url::portLink($port, $port->getShortLabel()) . '</b>';
+                    return '<b>'.Url::portLink($port, $port->getShortLabel()).'</b>';
                 }
             }
         }
@@ -100,7 +99,7 @@ class EventlogController extends TableController
         $output .= $this->severityLabel($eventlog->severity);
         $output .= " eventlog-status'></span><span style='display:inline;'>";
         $output .= (new Carbon($eventlog->datetime))->format(Config::get('dateformat.compact'));
-        $output .= "</span>";
+        $output .= '</span>';
 
         return $output;
     }
@@ -113,17 +112,19 @@ class EventlogController extends TableController
     {
         switch ($eventlog_severity) {
             case 1:
-                return "label-success"; //OK
+                return 'label-success'; //OK
             case 2:
-                return "label-info"; //Informational
+                return 'label-info'; //Informational
             case 3:
-                return "label-primary"; //Notice
+                return 'label-primary'; //Notice
             case 4:
-                return "label-warning"; //Warning
+                return 'label-warning'; //Warning
             case 5:
-                return "label-danger"; //Critical
+                return 'label-danger'; //Critical
             default:
-                return "label-default"; //Unknown
+                return 'label-default'; //Unknown
         }
-    } // end eventlog_severity
+    }
+
+    // end eventlog_severity
 }

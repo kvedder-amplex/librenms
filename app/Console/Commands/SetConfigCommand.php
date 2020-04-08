@@ -35,31 +35,36 @@ class SetConfigCommand extends LnmsCommand
         $setting = $this->argument('setting');
         $value = $this->argument('value');
 
-        if (!$definition->isValidSetting($setting)) {
+        if (! $definition->isValidSetting($setting)) {
             $this->error(__('This is not a valid setting. Please check your spelling'));
+
             return 2;
         }
 
-        if (!Eloquent::isConnected()) {
+        if (! Eloquent::isConnected()) {
             $this->error(__('Database is not connected'));
+
             return 1;
         }
 
-        if (!$value) {
+        if (! $value) {
             if ($this->confirm(__('Reset :setting to the default?', ['setting' => $setting]))) {
                 Config::erase($setting);
+
                 return 0;
             }
+
             return 3;
         }
 
         $value = $this->juggleType($value);
         $configItem = $definition->get($setting);
-        if (!$configItem->checkValue($value)) {
+        if (! $configItem->checkValue($value)) {
             $message = ($configItem->type || $configItem->validate)
                 ? $configItem->getValidationMessage($value)
                 : __('Cannot set :setting, it is missing validation definition.', ['setting' => $setting]);
             $this->error($message);
+
             return 2;
         }
 
@@ -68,11 +73,12 @@ class SetConfigCommand extends LnmsCommand
         }
 
         $this->error(__('Failed to set :setting', ['setting' => $setting]));
+
         return 1;
     }
 
     /**
-     * Convert the string input into the appropriate PHP native type
+     * Convert the string input into the appropriate PHP native type.
      *
      * @param $value
      * @return mixed
@@ -80,6 +86,7 @@ class SetConfigCommand extends LnmsCommand
     private function juggleType($value)
     {
         $json = json_decode($value, true);
+
         return json_last_error() ? $value : $json;
     }
 }

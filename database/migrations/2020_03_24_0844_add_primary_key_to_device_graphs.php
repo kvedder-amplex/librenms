@@ -12,7 +12,6 @@ use Illuminate\Database\Schema\Blueprint;
 
 class AddPrimaryKeyToDeviceGraphs extends Migration
 {
-
     /**
      * Run the migrations.
      *

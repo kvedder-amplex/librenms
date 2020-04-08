@@ -2,14 +2,14 @@
 
 namespace App\Providers;
 
+use App\Guards\ApiTokenGuard;
 use App\Models\DeviceGroup;
 use App\Models\User;
 use App\Policies\DeviceGroupPolicy;
 use App\Policies\UserPolicy;
-use App\Guards\ApiTokenGuard;
 use Auth;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -43,6 +43,7 @@ class AuthServiceProvider extends ServiceProvider
         Auth::extend('token_driver', function ($app, $name, array $config) {
             $userProvider = $app->make(TokenUserProvider::class);
             $request = $app->make('request');
+
             return new ApiTokenGuard($userProvider, $request);
         });
 

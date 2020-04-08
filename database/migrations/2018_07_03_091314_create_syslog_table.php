@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 
 class CreateSyslogTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -23,7 +22,7 @@ class CreateSyslogTable extends Migration
             $table->string('program', 32)->nullable()->index('program');
             $table->text('msg', 65535)->nullable();
             $table->bigInteger('seq', true)->unsigned();
-            $table->index(['priority','level'], 'priority_level');
+            $table->index(['priority', 'level'], 'priority_level');
             $table->index(['device_id', 'timestamp'], 'device_id-timestamp');
         });
     }

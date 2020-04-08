@@ -53,7 +53,7 @@ class AppServiceProvider extends ServiceProvider
             return \LibreNMS\Config::get($key);
         });
         Blade::if('notconfig', function ($key) {
-            return !\LibreNMS\Config::get($key);
+            return ! \LibreNMS\Config::get($key);
         });
         Blade::if('admin', function () {
             return auth()->check() && auth()->user()->isAdmin();
@@ -99,16 +99,20 @@ class AppServiceProvider extends ServiceProvider
             switch ($engine) {
                 case 'mapquest':
                     Log::debug('MapQuest geocode engine');
+
                     return $app->make(\App\ApiClients\MapquestApi::class);
                 case 'bing':
                     Log::debug('Bing geocode engine');
+
                     return $app->make(\App\ApiClients\BingApi::class);
                 case 'openstreetmap':
                     Log::debug('OpenStreetMap geocode engine');
+
                     return $app->make(\App\ApiClients\NominatimApi::class);
                 default:
                 case 'google':
                     Log::debug('Google Maps geocode engine');
+
                     return $app->make(\App\ApiClients\GoogleMapsApi::class);
             }
         });
@@ -134,7 +138,8 @@ class AppServiceProvider extends ServiceProvider
                 return true;
             }
 
-            $validator = Validator::make([$attribute => $value], [$attribute => 'exists:' . implode(',', $parameters)]);
+            $validator = Validator::make([$attribute => $value], [$attribute => 'exists:'.implode(',', $parameters)]);
+
             return $validator->passes();
         }, __('validation.exists'));
     }

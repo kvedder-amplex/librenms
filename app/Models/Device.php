@@ -13,8 +13,8 @@ use LibreNMS\Exceptions\InvalidIpException;
 use LibreNMS\Util\IP;
 use LibreNMS\Util\IPv4;
 use LibreNMS\Util\IPv6;
-use LibreNMS\Util\Url;
 use LibreNMS\Util\Time;
+use LibreNMS\Util\Url;
 use Permissions;
 
 class Device extends BaseModel
@@ -30,14 +30,14 @@ class Device extends BaseModel
     ];
 
     /**
-     * Initialize this class
+     * Initialize this class.
      */
     public static function boot()
     {
         parent::boot();
         self::loadAllOs(true);
 
-        static::deleting(function (Device $device) {
+        static::deleting(function (self $device) {
             // delete related data
             $device->ports()->delete();
             $device->syslogs()->delete();
@@ -49,18 +49,18 @@ class Device extends BaseModel
         });
 
         // handle device dependency updates
-        static::updated(function (Device $device) {
+        static::updated(function (self $device) {
             if ($device->isDirty('max_depth')) {
                 $device->children->each->updateMaxDepth();
             }
         });
 
-        static::pivotAttached(function (Device $device, $relationName, $pivotIds, $pivotIdsAttributes) {
+        static::pivotAttached(function (self $device, $relationName, $pivotIds, $pivotIdsAttributes) {
             if ($relationName == 'parents') {
                 // a parent attached to this device
 
                 // update the parent's max depth incase it used to be standalone
-                Device::whereIn('device_id', $pivotIds)->get()->each->validateStandalone();
+                self::whereIn('device_id', $pivotIds)->get()->each->validateStandalone();
 
                 // make sure this device's max depth is updated
                 $device->updateMaxDepth();
@@ -71,11 +71,11 @@ class Device extends BaseModel
                 $device->validateStandalone();
 
                 // make sure the child's max depth is updated
-                Device::whereIn('device_id', $pivotIds)->get()->each->updateMaxDepth();
+                self::whereIn('device_id', $pivotIds)->get()->each->updateMaxDepth();
             }
         });
 
-        static::pivotDetached(function (Device $device, $relationName, $pivotIds) {
+        static::pivotDetached(function (self $device, $relationName, $pivotIds) {
             if ($relationName == 'parents') {
                 // this device detached from a parent
 
@@ -83,12 +83,12 @@ class Device extends BaseModel
                 $device->updateMaxDepth();
 
                 // parent may now be standalone, update old parent
-                Device::whereIn('device_id', $pivotIds)->get()->each->validateStandalone();
+                self::whereIn('device_id', $pivotIds)->get()->each->validateStandalone();
             } elseif ($relationName == 'children') {
                 // a child device detached from this device
 
                 // update the detached child's max_depth
-                Device::whereIn('device_id', $pivotIds)->get()->each->updateMaxDepth();
+                self::whereIn('device_id', $pivotIds)->get()->each->updateMaxDepth();
 
                 // this device may be standalone, update it
                 $device->validateStandalone();
@@ -104,7 +104,7 @@ class Device extends BaseModel
     }
 
     /**
-     * Returns IP/Hostname where polling will be targeted to
+     * Returns IP/Hostname where polling will be targeted to.
      *
      * @param string $device hostname which will be triggered
      *        array  $device associative array with device data
@@ -125,13 +125,14 @@ class Device extends BaseModel
         } else {
             return $device['hostname'];
         }
+
         return $overwrite_ip ?: $hostname;
     }
 
     public static function findByIp($ip)
     {
-        if (!IP::isValid($ip)) {
-            return null;
+        if (! IP::isValid($ip)) {
+            return;
         }
 
         $device = static::where('hostname', $ip)->orWhere('ip', inet_pton($ip))->first();
@@ -167,13 +168,11 @@ class Device extends BaseModel
         } catch (ModelNotFoundException $e) {
             //
         }
-
-        return null;
     }
 
     /**
      * Get the display name of this device (hostname) unless force_ip_to_sysname is set
-     * and hostname is an IP and sysName is set
+     * and hostname is an IP and sysName is set.
      *
      * @return string
      */
@@ -228,9 +227,9 @@ class Device extends BaseModel
 
     public function loadOs($force = false)
     {
-        $yaml_file = base_path('/includes/definitions/' . $this->os . '.yaml');
+        $yaml_file = base_path('/includes/definitions/'.$this->os.'.yaml');
 
-        if ((!\LibreNMS\Config::getOsSetting($this->os, 'definition_loaded') || $force) && file_exists($yaml_file)) {
+        if ((! \LibreNMS\Config::getOsSetting($this->os, 'definition_loaded') || $force) && file_exists($yaml_file)) {
             $os = \Symfony\Component\Yaml\Yaml::parse(file_get_contents($yaml_file));
 
             \LibreNMS\Config::set("os.$this->os", array_replace_recursive($os, \LibreNMS\Config::get("os.$this->os", [])));
@@ -248,7 +247,7 @@ class Device extends BaseModel
     public static function loadAllOs($existing = false, $cached = true)
     {
         $install_dir = \LibreNMS\Config::get('install_dir');
-        $cache_file = $install_dir . '/cache/os_defs.cache';
+        $cache_file = $install_dir.'/cache/os_defs.cache';
         if ($cached && is_file($cache_file) && (time() - filemtime($cache_file) < \LibreNMS\Config::get('os_def_cache_time'))) {
             // Cached
             $os_defs = unserialize(file_get_contents($cache_file));
@@ -262,10 +261,10 @@ class Device extends BaseModel
             if ($existing) {
                 $os_list = [];
                 foreach (self::distinct('os')->get('os')->toArray() as $os) {
-                    $os_list[] = $install_dir . '/includes/definitions/' . $os['os'] . '.yaml';
+                    $os_list[] = $install_dir.'/includes/definitions/'.$os['os'].'.yaml';
                 }
             } else {
-                $os_list = glob($install_dir . '/includes/definitions/*.yaml');
+                $os_list = glob($install_dir.'/includes/definitions/*.yaml');
             }
             foreach ($os_list as $file) {
                 if (is_readable($file)) {
@@ -295,6 +294,7 @@ class Device extends BaseModel
         $length = \LibreNMS\Config::get('shorthost_target_length', $length);
         if ($length < strlen($name)) {
             $take = substr_count($name, '.', 0, $length) + 1;
+
             return implode('.', array_slice(explode('.', $name), 0, $take));
         }
 
@@ -309,7 +309,7 @@ class Device extends BaseModel
      */
     public function canAccess($user)
     {
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -361,7 +361,7 @@ class Device extends BaseModel
 
     /**
      * Update the max_depth field based on parents
-     * Performs SQL query, so make sure all parents are saved first
+     * Performs SQL query, so make sure all parents are saved first.
      *
      * @param int $exclude exclude a device_id from being considered (used for deleting)
      */
@@ -369,7 +369,7 @@ class Device extends BaseModel
     {
         // optimize for memory instead of time
         $query = $this->parents()->getQuery();
-        if (!is_null($exclude)) {
+        if (! is_null($exclude)) {
             $query->where('device_id', '!=', $exclude);
         }
 
@@ -390,10 +390,9 @@ class Device extends BaseModel
 
     /**
      * Device dependency check to see if this node is standalone or not.
-     * Standalone is a special case where the device has no parents or children and is denoted by a max_depth of 0
+     * Standalone is a special case where the device has no parents or children and is denoted by a max_depth of 0.
      *
      * Only checks on root nodes (where max_depth is 1 or 0)
-     *
      */
     public function validateStandalone()
     {
@@ -417,13 +416,14 @@ class Device extends BaseModel
             return $item->attrib_type === $name;
         });
 
-        if (!$attrib) {
+        if (! $attrib) {
             $attrib = new DeviceAttrib(['attrib_type' => $name]);
             $this->attribs->push($attrib);
         }
 
         $attrib->attrib_value = $value;
-        return (bool)$this->attribs()->save($attrib);
+
+        return (bool) $this->attribs()->save($attrib);
     }
 
     public function forgetAttrib($name)
@@ -433,10 +433,11 @@ class Device extends BaseModel
         });
 
         if ($attrib_index !== false) {
-            $deleted=(bool)$this->attribs->get($attrib_index)->delete();
+            $deleted = (bool) $this->attribs->get($attrib_index)->delete();
             // only forget the attrib_index after delete, otherwise delete() will fail fatally with:
             // Symfony\\Component\\Debug\Exception\\FatalThrowableError(code: 0):  Call to a member function delete() on null
             $this->attribs->forget($attrib_index);
+
             return $deleted;
         }
 
@@ -453,13 +454,14 @@ class Device extends BaseModel
     public function getIconAttribute($icon)
     {
         $this->loadOs();
+
         return Str::start(Url::findOsImage($this->os, $this->features, $icon), 'images/os/');
     }
 
     public function getIpAttribute($ip)
     {
         if (empty($ip)) {
-            return null;
+            return;
         }
         // @ suppresses warning, inet_ntop() returns false if it fails
         return @inet_ntop($ip) ?: null;
@@ -472,7 +474,7 @@ class Device extends BaseModel
 
     public function setStatusAttribute($status)
     {
-        $this->attributes['status'] = (int)$status;
+        $this->attributes['status'] = (int) $status;
     }
 
     // ---- Query scopes ----
@@ -483,7 +485,7 @@ class Device extends BaseModel
             ['status', '=', 1],
             ['ignore', '=', 0],
             ['disable_notify', '=', 0],
-            ['disabled', '=', 0]
+            ['disabled', '=', 0],
         ]);
     }
 
@@ -491,7 +493,7 @@ class Device extends BaseModel
     {
         return $query->where([
             ['ignore', '=', 0],
-            ['disabled', '=', 0]
+            ['disabled', '=', 0],
         ]);
     }
 
@@ -501,7 +503,7 @@ class Device extends BaseModel
             ['status', '=', 0],
             ['disable_notify', '=', 0],
             ['ignore', '=', 0],
-            ['disabled', '=', 0]
+            ['disabled', '=', 0],
         ]);
     }
 
@@ -509,28 +511,28 @@ class Device extends BaseModel
     {
         return $query->where([
             ['ignore', '=', 1],
-            ['disabled', '=', 0]
+            ['disabled', '=', 0],
         ]);
     }
 
     public function scopeNotIgnored($query)
     {
         return $query->where([
-            ['ignore', '=', 0]
+            ['ignore', '=', 0],
         ]);
     }
 
     public function scopeIsDisabled($query)
     {
         return $query->where([
-            ['disabled', '=', 1]
+            ['disabled', '=', 1],
         ]);
     }
 
     public function scopeIsDisableNotify($query)
     {
         return $query->where([
-            ['disable_notify', '=', 1]
+            ['disable_notify', '=', 1],
         ]);
     }
 
@@ -538,7 +540,7 @@ class Device extends BaseModel
     {
         return $query->where([
             ['disable_notify', '=', 0],
-            ['disabled', '=', 0]
+            ['disabled', '=', 0],
         ]);
     }
 
@@ -546,7 +548,7 @@ class Device extends BaseModel
     {
         return $query->where([
             ['uptime', '>', 0],
-            ['uptime', $modifier, $uptime]
+            ['uptime', $modifier, $uptime],
         ]);
     }
 

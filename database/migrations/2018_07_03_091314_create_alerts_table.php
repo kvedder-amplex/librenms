@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 
 class CreateAlertsTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -23,10 +22,9 @@ class CreateAlertsTable extends Migration
             $table->text('note')->nullable();
             $table->timestamp('timestamp')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->text('info');
-            $table->unique(['device_id','rule_id'], 'unique_alert');
+            $table->unique(['device_id', 'rule_id'], 'unique_alert');
         });
     }
-
 
     /**
      * Reverse the migrations.

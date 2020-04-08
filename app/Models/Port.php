@@ -15,7 +15,7 @@ class Port extends DeviceRelatedModel
     // ---- Helper Functions ----
 
     /**
-     * Returns a human readable label for this port
+     * Returns a human readable label for this port.
      *
      * @return string
      */
@@ -37,13 +37,13 @@ class Port extends DeviceRelatedModel
             }
         }
 
-        foreach ((array)\LibreNMS\Config::get('rewrite_if', []) as $src => $val) {
+        foreach ((array) \LibreNMS\Config::get('rewrite_if', []) as $src => $val) {
             if (str_i_contains($label, $src)) {
                 $label = $val;
             }
         }
 
-        foreach ((array)\LibreNMS\Config::get('rewrite_if_regexp', []) as $reg => $val) {
+        foreach ((array) \LibreNMS\Config::get('rewrite_if_regexp', []) as $reg => $val) {
             $label = preg_replace($reg.'i', $val, $label);
         }
 
@@ -68,7 +68,7 @@ class Port extends DeviceRelatedModel
      */
     public function canAccess($user)
     {
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -83,10 +83,9 @@ class Port extends DeviceRelatedModel
 
     public function getIfPhysAddressAttribute($mac)
     {
-        if (!empty($mac)) {
+        if (! empty($mac)) {
             return preg_replace('/(..)(..)(..)(..)(..)(..)/', '\\1:\\2:\\3:\\4:\\5:\\6', $mac);
         }
-        return null;
     }
 
     // ---- Query scopes ----
@@ -191,7 +190,7 @@ class Port extends DeviceRelatedModel
             ['ignore', '=', 0],
             ['disabled', '=', 0],
         ])->where(function ($query) {
-            /** @var Builder $query */
+            /* @var Builder $query */
             $query->where('ifInErrors_delta', '>', 0)
                 ->orWhere('ifOutErrors_delta', '>', 0);
         });

@@ -1,6 +1,6 @@
 <?php
 /**
- * bootstrap.php
+ * bootstrap.php.
  *
  * Initialize the Autoloader and includes for phpunit to be able to run tests
  *
@@ -17,26 +17,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2016 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
  */
-
 use LibreNMS\Config;
 use LibreNMS\DB\Eloquent;
 use LibreNMS\Exceptions\DatabaseConnectException;
 use LibreNMS\Util\Snmpsim;
 
-$install_dir = realpath(__DIR__ . '/..');
+$install_dir = realpath(__DIR__.'/..');
 
-$init_modules = array('web', 'discovery', 'polling', 'nodb');
+$init_modules = ['web', 'discovery', 'polling', 'nodb'];
 
-if (!getenv('SNMPSIM')) {
+if (! getenv('SNMPSIM')) {
     $init_modules[] = 'mocksnmp';
 }
 
-require $install_dir . '/includes/init.php';
+require $install_dir.'/includes/init.php';
 chdir($install_dir);
 
 ini_set('display_errors', 1);
@@ -58,14 +56,14 @@ if (getenv('DBTEST')) {
     global $migrate_result, $migrate_output;
 
     // create testing table if needed
-    $db_config = \config("database.connections.testing");
+    $db_config = \config('database.connections.testing');
     $connection = new PDO("mysql:host={$db_config['host']}", $db_config['username'], $db_config['password']);
     $connection->query("CREATE DATABASE IF NOT EXISTS {$db_config['database']} CHARACTER SET utf8 COLLATE utf8_unicode_ci");
     unset($connection); // close connection
 
     // try to avoid erasing people's primary databases
     if ($db_config['database'] !== \config('database.connections.mysql.database', 'librenms')) {
-        echo "Refreshing database...";
+        echo 'Refreshing database...';
         $migrate_result = Artisan::call('migrate:fresh', ['--seed' => true, '--env' => 'testing', '--database' => 'testing']);
         $migrate_output = Artisan::output();
         echo "done\n";

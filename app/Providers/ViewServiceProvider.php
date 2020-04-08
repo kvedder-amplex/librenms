@@ -1,6 +1,6 @@
 <?php
 /**
- * ViewServiceProvider.php
+ * ViewServiceProvider.php.
  *
  * Safely fall back to Laravel view service provider if String Blade Compiler is missing
  *
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2018 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
@@ -38,7 +37,7 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
 
     public function boot()
     {
-        if (!class_exists('Wpb\String_Blade_Compiler\ViewServiceProvider')) {
+        if (! class_exists('Wpb\String_Blade_Compiler\ViewServiceProvider')) {
             \Toastr::error('Dependencies missing, check <a href="validate">validate</a>');
         }
     }

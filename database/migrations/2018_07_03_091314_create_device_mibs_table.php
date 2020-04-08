@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 
 class CreateDeviceMibsTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -19,7 +18,7 @@ class CreateDeviceMibsTable extends Migration
             $table->string('mib');
             $table->string('included_by');
             $table->timestamp('last_modified')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
-            $table->primary(['device_id','module','mib']);
+            $table->primary(['device_id', 'module', 'mib']);
         });
     }
 

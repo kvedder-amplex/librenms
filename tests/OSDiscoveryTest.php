@@ -1,6 +1,6 @@
 <?php
 /**
- * OSDiscoveryTest.php
+ * OSDiscoveryTest.php.
  *
  * Test all discovery for all OS
  *
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2016 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
@@ -35,7 +34,7 @@ class OSDiscoveryTest extends TestCase
     {
         parent::setUpBeforeClass();
 
-        $glob = Config::get('install_dir') . "/tests/snmpsim/*.snmprec";
+        $glob = Config::get('install_dir').'/tests/snmpsim/*.snmprec';
 
         self::$unchecked_files = array_flip(array_map(function ($file) {
             return basename($file, '.snmprec');
@@ -43,7 +42,7 @@ class OSDiscoveryTest extends TestCase
     }
 
     /**
-     * Populate a list of files to check and make sure it isn't empty
+     * Populate a list of files to check and make sure it isn't empty.
      */
     public function testHaveFilesToTest()
     {
@@ -51,7 +50,7 @@ class OSDiscoveryTest extends TestCase
     }
 
     /**
-     * Test each OS provided by osProvider
+     * Test each OS provided by osProvider.
      *
      * @group os
      * @dataProvider osProvider
@@ -59,12 +58,12 @@ class OSDiscoveryTest extends TestCase
      */
     public function testOS($os_name)
     {
-        $glob = Config::get('install_dir') . "/tests/snmpsim/$os_name*.snmprec";
+        $glob = Config::get('install_dir')."/tests/snmpsim/$os_name*.snmprec";
         $files = array_map(function ($file) {
             return basename($file, '.snmprec');
         }, glob($glob));
         $files = array_filter($files, function ($file) use ($os_name) {
-            return $file == $os_name || starts_with($file, $os_name . '_');
+            return $file == $os_name || starts_with($file, $os_name.'_');
         });
 
         if (empty($files)) {
@@ -78,7 +77,7 @@ class OSDiscoveryTest extends TestCase
     }
 
     /**
-     * Test that all files have been tested (removed from self::$unchecked_files
+     * Test that all files have been tested (removed from self::$unchecked_files.
      *
      * @depends testOS
      */
@@ -86,13 +85,13 @@ class OSDiscoveryTest extends TestCase
     {
         $this->assertEmpty(
             self::$unchecked_files,
-            "Not all snmprec files were checked: " . print_r(array_keys(self::$unchecked_files), true)
+            'Not all snmprec files were checked: '.print_r(array_keys(self::$unchecked_files), true)
         );
     }
 
     /**
      * Set up and test an os
-     * If $filename is not set, it will use the snmprec file matching $expected_os
+     * If $filename is not set, it will use the snmprec file matching $expected_os.
      *
      * @param string $expected_os The os we should get back from getHostOS()
      * @param string $filename the name of the snmprec file to use
@@ -112,7 +111,7 @@ class OSDiscoveryTest extends TestCase
     }
 
     /**
-     * Generate a fake $device array
+     * Generate a fake $device array.
      *
      * @param string $community The snmp community to set
      * @return array resulting device array
@@ -148,16 +147,16 @@ class OSDiscoveryTest extends TestCase
             $config_os = array_keys(Config::get('os'));
         }
 
-        $excluded_os = array(
+        $excluded_os = [
             'default',
             'generic',
             'ping',
-        );
+        ];
         $filtered_os = array_diff($config_os, $excluded_os);
 
-        $all_os = array();
+        $all_os = [];
         foreach ($filtered_os as $os) {
-            $all_os[$os] = array($os);
+            $all_os[$os] = [$os];
         }
 
         return $all_os;

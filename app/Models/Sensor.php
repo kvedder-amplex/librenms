@@ -7,7 +7,7 @@ class Sensor extends DeviceRelatedModel
     public $timestamps = false;
     protected $primaryKey = 'sensor_id';
 
-    protected static $icons = array(
+    protected static $icons = [
         'airflow' => 'angle-double-right',
         'ber' => 'sort-amount-desc',
         'charge' => 'battery-half',
@@ -34,7 +34,7 @@ class Sensor extends DeviceRelatedModel
         'temperature' => 'thermometer-three-quarters',
         'voltage' => 'bolt',
         'waterflow' => 'tint',
-    );
+    ];
 
     // ---- Helper Functions ----
 
@@ -46,6 +46,7 @@ class Sensor extends DeviceRelatedModel
             'eer' => 'EER',
             'snr' => 'SNR',
         ]);
+
         return $nice->get($this->sensor_class, ucwords(str_replace('_', ' ', $this->sensor_class)));
     }
 

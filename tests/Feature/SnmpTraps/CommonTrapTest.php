@@ -1,6 +1,6 @@
 <?php
 /**
- * CommonTrapTest.php
+ * CommonTrapTest.php.
  *
  * -Description-
  *
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2019 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
@@ -100,7 +99,7 @@ UDP: [$device->ip]:64610->[192.168.5.5]:162
 DISMAN-EVENT-MIB::sysUpTimeInstance 198:2:10:48.91
 SNMPv2-MIB::snmpTrapOID.0 SNMPv2-MIB::authenticationFailure\n";
 
-        Log::shouldReceive('event')->once()->with('SNMP Trap: Authentication Failure: ' . $device->displayName(), $device->device_id, 'auth', 3);
+        Log::shouldReceive('event')->once()->with('SNMP Trap: Authentication Failure: '.$device->displayName(), $device->device_id, 'auth', 3);
 
         $trap = new Trap($trapText);
         $this->assertTrue(Dispatcher::handle($trap));
@@ -118,7 +117,7 @@ UDP: [$device->ip]:44298->[192.168.5.5]:162
 DISMAN-EVENT-MIB::sysUpTimeInstance 3:4:17:32.35
 SNMPv2-MIB::snmpTrapOID.0 BRIDGE-MIB::newRoot";
 
-        Log::shouldReceive('event')->once()->with('SNMP Trap: Device ' . $device->displayName() . ' was elected as new root on one of its Spanning Tree Instances', $device->device_id, 'stp', 3);
+        Log::shouldReceive('event')->once()->with('SNMP Trap: Device '.$device->displayName().' was elected as new root on one of its Spanning Tree Instances', $device->device_id, 'stp', 3);
 
         $trap = new Trap($trapText);
         $this->assertTrue(Dispatcher::handle($trap));
@@ -136,7 +135,7 @@ UDP: [$device->ip]:44298->[192.168.5.5]:162
 DISMAN-EVENT-MIB::sysUpTimeInstance 3:4:17:32.35
 SNMPv2-MIB::snmpTrapOID.0 BRIDGE-MIB::topologyChange";
 
-        Log::shouldReceive('event')->once()->with('SNMP Trap: Topology of Spanning Tree Instance on device ' . $device->displayName() . ' was changed', $device->device_id, 'stp', 3);
+        Log::shouldReceive('event')->once()->with('SNMP Trap: Topology of Spanning Tree Instance on device '.$device->displayName().' was changed', $device->device_id, 'stp', 3);
 
         $trap = new Trap($trapText);
         $this->assertTrue(Dispatcher::handle($trap));
@@ -154,7 +153,7 @@ UDP: [$device->ip]:44298->[192.168.5.5]:162
 DISMAN-EVENT-MIB::sysUpTimeInstance 0:0:1:12.7
 SNMPv2-MIB::snmpTrapOID.0 SNMPv2-MIB::coldStart";
 
-        Log::shouldReceive('event')->once()->with('SNMP Trap: Device ' . $device->displayName() . ' cold booted', $device->device_id, 'reboot', 4);
+        Log::shouldReceive('event')->once()->with('SNMP Trap: Device '.$device->displayName().' cold booted', $device->device_id, 'reboot', 4);
 
         $trap = new Trap($trapText);
         $this->assertTrue(Dispatcher::handle($trap));
@@ -162,7 +161,6 @@ SNMPv2-MIB::snmpTrapOID.0 SNMPv2-MIB::coldStart";
         // check that the device was found
         $this->assertEquals($device->hostname, $trap->getDevice()->hostname);
     }
-
 
     public function testEntityDatabaseChanged()
     {
@@ -173,7 +171,7 @@ UDP: [$device->ip]:44298->[192.168.5.5]:162
 DISMAN-EVENT-MIB::sysUpTimeInstance 3:4:17:32.35
 SNMPv2-MIB::snmpTrapOID.0 ENTITY-MIB::entConfigChange";
 
-        Log::shouldReceive('event')->once()->with('SNMP Trap: Configuration of Entity Database on device ' . $device->displayName() . ' was changed', $device->device_id, 'system', 3);
+        Log::shouldReceive('event')->once()->with('SNMP Trap: Configuration of Entity Database on device '.$device->displayName().' was changed', $device->device_id, 'system', 3);
 
         $trap = new Trap($trapText);
         $this->assertTrue(Dispatcher::handle($trap));

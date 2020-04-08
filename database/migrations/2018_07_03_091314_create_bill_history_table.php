@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 
 class CreateBillHistoryTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -35,10 +34,10 @@ class CreateBillHistoryTable extends Migration
             $table->bigInteger('traf_out');
             $table->bigInteger('traf_total');
             $table->binary('pdf')->nullable();
-            $table->unique(['bill_id','bill_datefrom','bill_dateto'], 'unique_index');
+            $table->unique(['bill_id', 'bill_datefrom', 'bill_dateto'], 'unique_index');
         });
 
-        \DB::statement("ALTER TABLE `bill_history` CHANGE `pdf` `pdf` longblob NULL ;");
+        \DB::statement('ALTER TABLE `bill_history` CHANGE `pdf` `pdf` longblob NULL ;');
     }
 
     /**

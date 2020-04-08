@@ -1,6 +1,6 @@
 <?php
 /**
- * OSModulesTest.php
+ * OSModulesTest.php.
  *
  * Test discovery and poller modules
  *
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2017 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
@@ -55,7 +54,7 @@ class OSModulesTest extends DBTestCase
     }
 
     /**
-     * Test all modules for a particular OS
+     * Test all modules for a particular OS.
      *
      * @group os
      * @dataProvider dumpedDataProvider
@@ -71,7 +70,7 @@ class OSModulesTest extends DBTestCase
     }
 
     /**
-     * Test all modules for a particular OS
+     * Test all modules for a particular OS.
      *
      * @group os
      * @dataProvider dumpedDataProvider
@@ -93,9 +92,11 @@ class OSModulesTest extends DBTestCase
             $results = $helper->generateTestData($this->getSnmpsim(), true);
         } catch (FileNotFoundException $e) {
             $this->fail($e->getMessage());
+
             return;
         } catch (InvalidModuleException $e) {
             $this->fail($e->getMessage());
+
             return;
         }
 
@@ -113,9 +114,9 @@ class OSModulesTest extends DBTestCase
                 $expected,
                 $actual,
                 "OS $os: Discovered $module data does not match that found in $filename\n"
-                . print_r(array_diff($expected, $actual), true)
-                . $helper->getDiscoveryOutput($debug ? null : $module)
-                . "\nOS $os: Discovered $module data does not match that found in $filename"
+                .print_r(array_diff($expected, $actual), true)
+                .$helper->getDiscoveryOutput($debug ? null : $module)
+                ."\nOS $os: Discovered $module data does not match that found in $filename"
             );
 
             if ($expected_data[$module]['poller'] == 'matches discovery') {
@@ -128,9 +129,9 @@ class OSModulesTest extends DBTestCase
                 $expected,
                 $actual,
                 "OS $os: Polled $module data does not match that found in $filename\n"
-                . print_r(array_diff($expected, $actual), true)
-                . $helper->getPollerOutput($debug ? null : $module)
-                . "\nOS $os: Polled $module data does not match that found in $filename"
+                .print_r(array_diff($expected, $actual), true)
+                .$helper->getPollerOutput($debug ? null : $module)
+                ."\nOS $os: Polled $module data does not match that found in $filename"
             );
         }
 
@@ -139,7 +140,7 @@ class OSModulesTest extends DBTestCase
 
     public function dumpedDataProvider()
     {
-        $modules = array();
+        $modules = [];
 
         if (getenv('TEST_MODULES')) {
             $modules = explode(',', getenv('TEST_MODULES'));

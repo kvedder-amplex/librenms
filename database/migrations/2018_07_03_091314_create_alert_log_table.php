@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 
 class CreateAlertLogTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -22,7 +21,7 @@ class CreateAlertLogTable extends Migration
             $table->timestamp('time_logged')->default(DB::raw('CURRENT_TIMESTAMP'))->index('time_logged');
         });
 
-        \DB::statement("ALTER TABLE `alert_log` CHANGE `details` `details` longblob NULL ;");
+        \DB::statement('ALTER TABLE `alert_log` CHANGE `details` `details` longblob NULL ;');
     }
 
     /**

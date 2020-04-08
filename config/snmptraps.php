@@ -77,5 +77,5 @@ return [
         'VMWARE-VMINFO-MIB::vmwVmPoweredOn' => \LibreNMS\Snmptrap\Handlers\VmwVmPoweredOn::class,
         'VMWARE-VMINFO-MIB::vmwVmPoweredOff' => \LibreNMS\Snmptrap\Handlers\VmwVmPoweredOff::class,
         'VMWARE-VMINFO-MIB::vmwVmSuspended' => \LibreNMS\Snmptrap\Handlers\VmwVmSuspended::class,
-    ]
+    ],
 ];

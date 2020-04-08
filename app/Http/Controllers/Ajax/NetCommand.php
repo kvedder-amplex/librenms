@@ -1,6 +1,6 @@
 <?php
 /**
- * NetCommand.php
+ * NetCommand.php.
  *
  * -Description-
  *
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2019 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
@@ -26,8 +25,8 @@
 namespace App\Http\Controllers\Ajax;
 
 use App\Http\Controllers\Controller;
-use \LibreNMS\Config;
 use Illuminate\Http\Request;
+use LibreNMS\Config;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Process\Process;
 
@@ -53,7 +52,7 @@ class NetCommand extends Controller
                 $cmd = [Config::get('mtr', 'mtr'), '-r', '-c', '5', $request->get('query')];
                 break;
             case 'nmap':
-                if (!$request->user()->isAdmin()) {
+                if (! $request->user()->isAdmin()) {
                     return response('Insufficient privileges');
                 } else {
                     $cmd = [Config::get('nmap', 'nmap'), $request->get('query')];
@@ -74,7 +73,7 @@ class NetCommand extends Controller
                 if (str_contains($ua, ['Chrome', 'Trident'])) {
                     $char = "\f"; // line feed
                 } else {
-                    $char = "";
+                    $char = '';
                 }
                 echo str_repeat($char, 4096);
                 echo PHP_EOL; // avoid first line mess ups due to line feed

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018_07_03_091314_create_alert_transport_map_table.php
+ * 2018_07_03_091314_create_alert_transport_map_table.php.
  *
  * -Description-
  *
@@ -17,18 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2018 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
  */
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateAlertTransportMapTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -43,7 +40,6 @@ class CreateAlertTransportMapTable extends Migration
             $table->string('target_type', 16);
         });
     }
-
 
     /**
      * Reverse the migrations.

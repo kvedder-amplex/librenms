@@ -1,6 +1,6 @@
 <?php
 /**
- * DBSetup.php
+ * DBSetup.php.
  *
  * -Description-
  *
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2017 Neil Lathwood
  * @author     Neil Lathwood <librenms+n@laf.io>
@@ -25,7 +24,7 @@
 
 namespace LibreNMS\Tests;
 
-use \PHPUnit\Framework\ExpectationFailedException as PHPUnitException;
+use PHPUnit\Framework\ExpectationFailedException as PHPUnitException;
 
 class DBSetupTest extends DBTestCase
 {
@@ -41,25 +40,25 @@ class DBSetupTest extends DBTestCase
     {
         global $migrate_output, $migrate_result;
 
-        $this->assertSame(0, $migrate_result, "Errors loading DB Schema: " . $migrate_output);
+        $this->assertSame(0, $migrate_result, 'Errors loading DB Schema: '.$migrate_output);
     }
 
     public function testSchemaFiles()
     {
-        $files = glob(\LibreNMS\Config::get('install_dir') . '/sql-schema/*.sql');
+        $files = glob(\LibreNMS\Config::get('install_dir').'/sql-schema/*.sql');
 
         foreach ($files as $file) {
             $content = file_get_contents($file);
 
             foreach (explode("\n", $content) as $line) {
                 // skip comments and empty lines
-                if (empty($line) || starts_with($line, array('#', '--'))) {
+                if (empty($line) || starts_with($line, ['#', '--'])) {
                     continue;
                 }
 
                 // each line must end with ;, prevents multiline and makes sql easy to run by hand
                 // Warning may include whitespace such as space and \r
-                if (!ends_with($line, ';')) {
+                if (! ends_with($line, ';')) {
                     throw new PHPUnitException("Each line must end with a semicolin (;)\n$file: $line");
                 }
 
@@ -77,14 +76,14 @@ class DBSetupTest extends DBTestCase
     {
         $files = array_map(function ($migration_file) {
             return basename($migration_file, '.php');
-        }, array_diff(scandir(\LibreNMS\Config::get('install_dir') . '/database/migrations'), ['.', '..']));
+        }, array_diff(scandir(\LibreNMS\Config::get('install_dir').'/database/migrations'), ['.', '..']));
         $migrated = dbFetchColumn('SELECT migration FROM migrations');
         sort($files);
         sort($migrated);
-        $this->assertEquals($files, $migrated, "List of run migrations did not match existing migration files.");
+        $this->assertEquals($files, $migrated, 'List of run migrations did not match existing migration files.');
 
         $schema = get_db_schema();
-        $this->assertEquals(1000, $schema, "Seed not run, after seed legacy dbSchema should be 1000");
+        $this->assertEquals(1000, $schema, 'Seed not run, after seed legacy dbSchema should be 1000');
     }
 
     public function testCheckDBCollation()
@@ -95,7 +94,7 @@ class DBSetupTest extends DBTestCase
         } else {
             $error = '';
         }
-        $this->assertEmpty($collation, 'Wrong Database Collation or Character set: ' . $error);
+        $this->assertEmpty($collation, 'Wrong Database Collation or Character set: '.$error);
     }
 
     public function testCheckTableCollation()
@@ -103,9 +102,9 @@ class DBSetupTest extends DBTestCase
         $collation = dbFetchRows("SELECT T.TABLE_NAME, C.CHARACTER_SET_NAME, C.COLLATION_NAME FROM information_schema.TABLES AS T, information_schema.COLLATION_CHARACTER_SET_APPLICABILITY AS C WHERE C.collation_name = T.table_collation AND T.table_schema = '$this->db_name' AND  ( C.CHARACTER_SET_NAME != 'utf8' OR C.COLLATION_NAME != 'utf8_unicode_ci' );");
         $error = '';
         foreach ($collation as $id => $data) {
-            $error .= implode(' ', $data) . PHP_EOL;
+            $error .= implode(' ', $data).PHP_EOL;
         }
-        $this->assertEmpty($collation, 'Wrong Table Collation or Character set: ' . $error);
+        $this->assertEmpty($collation, 'Wrong Table Collation or Character set: '.$error);
     }
 
     public function testCheckColumnCollation()
@@ -113,16 +112,16 @@ class DBSetupTest extends DBTestCase
         $collation = dbFetchRows("SELECT TABLE_NAME, COLUMN_NAME, CHARACTER_SET_NAME, COLLATION_NAME FROM information_schema.COLUMNS  WHERE TABLE_SCHEMA = '$this->db_name'  AND  ( CHARACTER_SET_NAME != 'utf8' OR COLLATION_NAME != 'utf8_unicode_ci' );");
         $error = '';
         foreach ($collation as $id => $data) {
-            $error .= implode(' ', $data) . PHP_EOL;
+            $error .= implode(' ', $data).PHP_EOL;
         }
-        $this->assertEmpty($collation, 'Wrong Column Collation or Character set: ' . $error);
+        $this->assertEmpty($collation, 'Wrong Column Collation or Character set: '.$error);
     }
 
     public function testSqlMode()
     {
         $this->assertEquals(
             'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION',
-            dbFetchCell("SELECT @@sql_mode")
+            dbFetchCell('SELECT @@sql_mode')
         );
     }
 

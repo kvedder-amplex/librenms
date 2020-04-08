@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018_07_03_091314_create_alert_transport_groups_table.php
+ * 2018_07_03_091314_create_alert_transport_groups_table.php.
  *
  * -Description-
  *
@@ -17,18 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @package    LibreNMS
  * @link       http://librenms.org
  * @copyright  2018 Tony Murray
  * @author     Tony Murray <murraytony@gmail.com>
  */
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateAlertTransportGroupsTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -41,7 +38,6 @@ class CreateAlertTransportGroupsTable extends Migration
             $table->string('transport_group_name', 30);
         });
     }
-
 
     /**
      * Reverse the migrations.

@@ -32,7 +32,7 @@ use LibreNMS\Tests\TestCase;
  */
 class DatastoreTest extends TestCase
 {
-    public function setUp() : void
+    protected function setUp() : void
     {
         parent::setUp();
 

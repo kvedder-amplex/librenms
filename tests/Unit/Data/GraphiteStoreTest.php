@@ -35,7 +35,7 @@ class GraphiteStoreTest extends TestCase
 {
     protected $timestamp = 997464400;
 
-    public function setUp() : void
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -43,7 +43,7 @@ class GraphiteStoreTest extends TestCase
         Carbon::setTestNow(Carbon::createFromTimestamp($this->timestamp));
     }
 
-    public function tearDown() : void
+    protected function tearDown() : void
     {
         // restore Carbon:now() to normal
         Carbon::setTestNow();

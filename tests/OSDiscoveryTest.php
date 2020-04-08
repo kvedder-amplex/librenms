@@ -31,7 +31,7 @@ class OSDiscoveryTest extends TestCase
 {
     private static $unchecked_files;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 

@@ -106,7 +106,7 @@ class PermissionsTest extends TestCase
                 (object)['user_id' => 4, 'device_id' => 5],
                 (object)['user_id' => 6, 'device_id' => 5],
             ]));
-    
+
             $this->assertEquals(collect([4, 6]), $perms->usersForDevice(5));
             $this->assertEquals(collect([3]), $perms->usersForDevice(factory(Device::class)->make(['device_id' => 7])));
             $this->assertEquals(collect(), $perms->usersForDevice(6));

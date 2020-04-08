@@ -24,8 +24,8 @@
 
 namespace LibreNMS\Tests;
 
-use Illuminate\Support\Str;
 use Exception;
+use Illuminate\Support\Str;
 use LibreNMS\Config;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;

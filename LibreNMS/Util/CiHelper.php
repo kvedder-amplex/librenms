@@ -51,11 +51,11 @@ class CiHelper
     ];
     private $flags = [
         'lint_enable' => true,
-        'style_enable' => true,
+        'style_enable' => false,
         'unit_enable' => true,
         'web_enable' => false,
         'lint_skip' => false,
-        'style_skip' => false,
+        'style_skip' => true,
         'unit_skip' => false,
         'web_skip' => false,
         'lint_skip_php' => false,
@@ -205,6 +205,11 @@ class CiHelper
      */
     public function checkStyle()
     {
+
+        // Disabled in favor of styleci
+        echo "Style check disabled.\n";
+        return 250;
+
         $cs_cmd = [
             $this->checkPhpExec('phpcs'),
             '-n',

@@ -39,6 +39,8 @@ install:
 
 after_failure:
   - tail /tmp/snmpsimd.log
+  - cat storage/logs/*.log
+  - cat logs/*.log
 
 after_success:
   - scripts/deploy-docs.sh
